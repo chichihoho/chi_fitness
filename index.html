@@ -86,6 +86,11 @@ a.edit{color:#1d5bd8;font-weight:500}
 .meal span:nth-child(2){margin-left:auto;color:#52627f}
 .meal button,td button{min-height:36px;padding:4px 12px;font-size:13px;background:#fdecec;color:#b42318}
 
+input[type=date]{-webkit-appearance:none;appearance:none;display:block;min-width:0;max-width:100%;line-height:1.2;text-align:left}
+.datebox{max-width:100%}
+.danger{background:#fdecec;color:#b42318}
+.row .grow{flex:1 1 auto}
+@media (max-width:640px){.datebox{min-width:0;width:100%}input[type=date]{width:100%}.row button{flex:1 1 100%}}
 </style>
 </head>
 <body>
@@ -99,6 +104,7 @@ a.edit{color:#1d5bd8;font-weight:500}
 <div class="datebox"><label for="date">日期</label><input id="date" type="date"></div>
 </header>
 
+<p class="tip warn" id="storeWarn" hidden>這個瀏覽器無法儲存資料（可能是無痕模式或已關閉網站資料），關閉頁面後紀錄會消失。請改用一般模式，並定期匯出備份。</p>
 <div class="layout">
 <div class="col">
 <section class="card">
@@ -148,8 +154,8 @@ a.edit{color:#1d5bd8;font-weight:500}
 <div id="meals"></div>
 <p id="mtotal" class="note" style="font-weight:700"></p>
 </div>
-<div class="row" style="margin-top:4px"><button type="button" id="save">儲存並產生建議</button><span id="msg" class="note" style="margin:0"></span></div>
-<p class="note">同一天重複儲存會更新該日資料，未填欄位會保留原值。</p>
+<div class="row" style="margin-top:4px"><button type="button" id="save">儲存並產生建議</button><button type="button" class="danger" id="delDay">刪除這天資料</button><span id="msg" class="note" style="margin:0"></span></div>
+<p class="note">同一天重複儲存會更新該日資料，未填欄位會保留原值。要修改某一天，選擇日期後直接改欄位再儲存；要刪除，按「刪除這天資料」。</p>
 </section>
 </div>
 
@@ -162,7 +168,7 @@ a.edit{color:#1d5bd8;font-weight:500}
 <div class="stat" id="sEx"><span>運動時間</span><b>–</b></div>
 <div class="stat" id="sTdee"><span>TDEE（每日總消耗）</span><b>–</b></div>
 </div>
-<div class="legend">
+<div class="legend" id="lgP" hidden>
 <p class="lt">今日蛋白質顏色（公克／公斤體重）</p>
 <ul>
 <li class="s-red"><i></i>未達 1.0 倍・偏低</li>
@@ -184,7 +190,7 @@ a.edit{color:#1d5bd8;font-weight:500}
 <div class="stat" id="wKcal"><span>平均熱量</span><b>–</b></div>
 <div class="stat" id="wWt"><span>體重變化</span><b>–</b></div>
 </div>
-<div class="legend">
+<div class="legend" id="lgW" hidden>
 <p class="lt">運動天數顏色（每週）</p>
 <ul>
 <li class="s-red"><i></i>0–2 天・偏少</li>
@@ -211,7 +217,18 @@ a.edit{color:#1d5bd8;font-weight:500}
 <div class="scroll">
 <table id="tbl"></table>
 </div>
-<div class="row"><button type="button" class="ghost" id="copy">複製為 CSV</button><span id="msg2" class="note" style="margin:0"></span></div>
+<div class="row"><button type="button" class="ghost" id="copy">複製為 CSV</button><button type="button" class="ghost" id="exp">匯出備份</button><button type="button" class="ghost" id="imp">匯入備份</button><input type="file" id="impFile" accept="application/json,.json" hidden><span id="msg2" class="note" style="margin:0"></span></div>
+<p class="note">資料只存在這個瀏覽器裡。換手機、換瀏覽器或清除網站資料都會看不到，建議定期按「匯出備份」存下檔案，或使用下方的雲端同步。</p>
+</section>
+
+<section class="card wide">
+<h2>雲端同步（Google 試算表）</h2>
+<p class="note" style="margin:-6px 0 14px">設定後，每次儲存、修改或刪除都會同步到你的試算表。網址與密碼只存在這個瀏覽器，不會上傳到 GitHub。</p>
+<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">
+<div style="grid-column:1 / -1"><label for="syncUrl">試算表網址（Apps Script 網頁應用程式網址）</label><input id="syncUrl" type="url" placeholder="https://script.google.com/macros/s/…/exec"></div>
+<div><label for="syncPwd">自訂密碼</label><input id="syncPwd" type="password" autocomplete="off"></div>
+</div>
+<div class="row"><button type="button" id="syncSave">儲存設定並同步</button><button type="button" class="ghost" id="syncNow">立即同步</button><button type="button" class="ghost" id="syncOff">清除設定</button><span id="syncMsg" class="note" style="margin:0"></span></div>
 </section>
 </div>
 </div>
@@ -221,7 +238,11 @@ const KEY='bodylog.v1';
 let mem=null;
 function load(){try{const s=localStorage.getItem(KEY);if(s)return JSON.parse(s)}catch(e){}return mem||{profile:{sex:'m',age:30,height:170,goal:'cut'},entries:{}}}
 let S=load();
-function persist(){mem=S;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+const SK='bodylog.sync',DK='bodylog.dirty';
+let SY=(()=>{try{return JSON.parse(localStorage.getItem(SK))||{}}catch(e){return{}}})();
+let ptmr=null;
+function persist(){mem=S;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){const w=document.getElementById('storeWarn');if(w)w.hidden=false}
+  if(SY.url){try{localStorage.setItem(DK,'1')}catch(e){}clearTimeout(ptmr);ptmr=setTimeout(pushNow,800)}}
 const $=id=>document.getElementById(id);
 const FB=['weight','fat','muscle','bmi','bmr','bage','visc','cardio','strength'];
 const F=FB.concat(['kcal','protein']);
@@ -342,7 +363,7 @@ function advice(){
 function renderDaily(){
   const a=advice();
   if(!a){
-    setStat('sKcal','–');setStat('sProt','–');setStat('sEx','–');setStat('sTdee','–');
+    setStat('sKcal','–');setStat('sProt','–');setStat('sEx','–');setStat('sTdee','–');$('lgP').hidden=true;
     $('tips').innerHTML='<p class="tip info">儲存第一筆紀錄後，這裡會顯示每日建議。</p>';return;
   }
   const e=a.e;
@@ -354,6 +375,7 @@ function renderDaily(){
   const m=(e.cardio||0)+(e.strength||0);
   setStat('sEx',m?m+' 分':'–');
   setStat('sTdee',a.tdee?a.tdee+' kcal':'–');
+  $('lgP').hidden=!(e.protein!=null&&a.w);
   $('tips').innerHTML=a.tips.map(t=>'<p class="tip '+t.c+'">'+esc(t.t)+'</p>').join('');
 }
 
@@ -426,7 +448,7 @@ function renderWeekly(){
   $('wrange').textContent=a+' ～ '+b;
   const ds=dates().filter(d=>d>=a&&d<=b),es=ds.map(d=>S.entries[d]);
   if(!ds.length){
-    setStat('wDays','– / 7');setStat('wRec','–');setStat('wKcal','–');setStat('wWt','–');
+    $('lgW').hidden=true;setStat('wDays','– / 7');setStat('wRec','–');setStat('wKcal','–');setStat('wWt','–');
     $('wtips').innerHTML='<p class="tip info">這週還沒有紀錄。</p>';return;
   }
   const sum=k=>es.reduce((t,e)=>t+(e[k]||0),0);
@@ -435,7 +457,7 @@ function renderWeekly(){
   const ak=avg('kcal'),ap=avg('protein');
   const wv=es.filter(e=>e.weight!=null).map(e=>e.weight),wd=wv.length>=2?r1(wv[wv.length-1]-wv[0]):null;
   const all=dates();let wl=null;for(let i=all.length-1;i>=0;i--){if(S.entries[all[i]].weight!=null){wl=S.entries[all[i]].weight;break}}
-  setStat('wDays',exd+' / 7',exClass(exd));
+  $('lgW').hidden=false;setStat('wDays',exd+' / 7',exClass(exd));
   setStat('wRec',ds.length+' 天');
   setStat('wKcal',ak!=null?ak+' kcal':'–');
   setStat('wWt',wd!=null?(wd>0?'+':'')+wd+' kg':'–');
@@ -463,7 +485,80 @@ function renderWeekly(){
   $('wtips').innerHTML=t.join('');
 }
 
+$('delDay').onclick=()=>{
+  const d=$('date').value;
+  if(!d||!S.entries[d]){$('msg').textContent='這天沒有可刪除的紀錄';setTimeout(()=>$('msg').textContent='',2000);return}
+  if(!confirm('確定刪除 '+d+' 的所有紀錄？此動作無法復原。'))return;
+  delete S.entries[d];persist();$('bmi').dataset.manual='';fillForm();render();
+  $('msg').textContent='已刪除 '+d+' 的紀錄';setTimeout(()=>$('msg').textContent='',2500);
+};
+$('exp').onclick=()=>{
+  const b=new Blob([JSON.stringify(S,null,1)],{type:'application/json'}),u=URL.createObjectURL(b),a=document.createElement('a');
+  a.href=u;a.download='body-diary-'+today()+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000);
+  $('msg2').textContent='已匯出備份檔';setTimeout(()=>$('msg2').textContent='',2500);
+};
+$('imp').onclick=()=>$('impFile').click();
+$('impFile').addEventListener('change',ev=>{
+  const f=ev.target.files[0];if(!f)return;
+  const rd=new FileReader();
+  rd.onload=()=>{
+    try{
+      const r=JSON.parse(rd.result);
+      if(!r||typeof r.entries!=='object')throw new Error('bad');
+      if(!confirm('匯入會與目前紀錄合併，同一天的資料以備份檔為準。要繼續嗎？'))return;
+      S={profile:r.profile||S.profile,entries:Object.assign({},S.entries,r.entries)};
+      persist();fillProfile();fillForm();render();$('msg2').textContent='已匯入備份';
+    }catch(e){$('msg2').textContent='備份檔格式不正確'}
+    ev.target.value='';setTimeout(()=>$('msg2').textContent='',3000);
+  };
+  rd.readAsText(f);
+});
+try{localStorage.setItem('__t','1');localStorage.removeItem('__t')}catch(e){$('storeWarn').hidden=false}
+try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
+const setSync=t=>{$('syncMsg').textContent=t};
+async function call(action,data){
+  const r=await fetch(SY.url,{method:'POST',body:JSON.stringify({action,token:SY.pwd,data})});
+  const j=await r.json();if(!j.ok)throw new Error(j.error||'失敗');return j;
+}
+async function pushNow(){
+  if(!SY.url)return;setSync('同步中…');
+  try{await call('push',S);try{localStorage.removeItem(DK)}catch(e){}setSync('已同步 '+new Date().toLocaleTimeString())}
+  catch(e){setSync('同步失敗：'+e.message+'（資料仍保存在這個瀏覽器，下次開啟會再試）')}
+}
+async function pullNow(){
+  if(!SY.url)return;setSync('讀取中…');
+  try{
+    const d=(await call('pull')).data;
+    if(d&&d.entries&&Object.keys(d.entries).length){
+      S={profile:d.profile&&d.profile.sex?d.profile:S.profile,entries:d.entries};
+      try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}
+      fillProfile();fillForm();render();setSync('已從試算表載入 '+new Date().toLocaleTimeString());
+    }else if(Object.keys(S.entries).length){await pushNow()}
+    else setSync('已連線，試算表目前沒有資料');
+  }catch(e){setSync('讀取失敗：'+e.message)}
+}
+$('syncSave').onclick=async()=>{
+  const u=$('syncUrl').value.trim(),p=$('syncPwd').value;
+  if(!/^https:\/\/script\.google\.com\/.+\/exec/.test(u)){setSync('網址格式不正確，應該是 https://script.google.com/…/exec');return}
+  if(!p){setSync('請輸入密碼');return}
+  SY={url:u,pwd:p};try{localStorage.setItem(SK,JSON.stringify(SY))}catch(e){}
+  setSync('連線中…');
+  try{
+    const d=(await call('pull')).data;
+    if(d&&d.entries&&Object.keys(d.entries).length){
+      S={profile:S.profile,entries:Object.assign({},d.entries,S.entries)};
+      persist();fillProfile();fillForm();render();
+    }else{await pushNow()}
+    setSync('設定完成，已與試算表合併並同步（同一天的資料以這個瀏覽器為準）');
+  }catch(e){setSync('連線失敗：'+e.message+'。請確認網址、密碼，以及部署時「誰可以存取」選「所有人」')}
+};
+$('syncNow').onclick=()=>{if(!SY.url){setSync('請先填寫網址與密碼並儲存設定');return}localStorage.getItem(DK)?pushNow():pullNow()};
+$('syncOff').onclick=()=>{
+  SY={};try{localStorage.removeItem(SK);localStorage.removeItem(DK)}catch(e){}
+  $('syncUrl').value='';$('syncPwd').value='';setSync('已清除設定。資料仍保留在這個瀏覽器與試算表中');
+};
 $('date').value=today();fillProfile();fillForm();render();
+if(SY.url){$('syncUrl').value=SY.url;$('syncPwd').value=SY.pwd||'';localStorage.getItem(DK)?pushNow():pullNow()}
 
 </script>
 </body>
