@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>身體數據與飲食日記</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+
+body{margin:0}
+*{box-sizing:border-box}
+.page{font-family:"Space Grotesk","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;background:#f3f6fb;color:#0f1c33;font-size:15px;line-height:1.6;min-height:100%}
+.wrap{max-width:1160px;margin:0 auto;padding:32px 24px 56px}
+.hd{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:24px}
+.hd h1{margin:0;font-size:30px;line-height:1.25;letter-spacing:.01em}
+.hd p{margin:6px 0 0;color:#52627f;font-size:14px;max-width:560px}
+.datebox{display:flex;flex-direction:column;gap:4px;min-width:180px}
+.layout{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:20px;align-items:start}
+.col{display:flex;flex-direction:column;gap:20px;min-width:0}
+.side{position:sticky;top:16px}
+.card{background:#fff;border:1px solid #dbe3f0;border-radius:16px;padding:22px}
+.card h2{margin:0 0 14px;font-size:18px}
+.blk{border:1px solid #dbe3f0;border-radius:14px;padding:16px 18px;margin-bottom:14px;background:#f9fbff}
+.blk h3{margin:0 0 12px;font-size:16px}
+.sec{font-size:12px;font-weight:700;letter-spacing:.08em;color:#1d5bd8;margin:22px 0 10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
+label{display:block;font-size:13px;color:#52627f;margin-bottom:4px}
+input,select{width:100%;min-height:44px;padding:9px 12px;border:1px solid #c6d2e6;border-radius:10px;background:#f7f9fd;color:#0f1c33;font:inherit}
+input:focus,select:focus,button:focus-visible{outline:3px solid #1d5bd8;outline-offset:1px}
+button{font:inherit;min-height:44px;border:0;border-radius:10px;padding:10px 20px;background:#1d5bd8;color:#fff;font-weight:700;cursor:pointer}
+button.ghost{background:#e6eefc;color:#164aae}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:18px}
+.note{font-size:13px;color:#52627f;margin:10px 0 0}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips label{display:flex;align-items:center;gap:6px;margin:0;min-height:44px;padding:8px 16px;border:1px solid #c6d2e6;border-radius:22px;font-size:14px;color:#0f1c33;cursor:pointer;background:#fff}
+.chips input{width:auto;min-height:0;margin:0}
+.meal-add{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:12px;align-items:end}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.stat{background:#f3f6fb;border-radius:12px;padding:10px 14px}
+.stat span{display:block;font-size:12px;color:#52627f}
+.stat b{display:block;font-size:20px}
+.tip{padding:12px 14px;border-radius:12px;background:#e6eefc;margin:0 0 10px;font-size:14px}
+.tip.info{background:#eef3fb}
+.tip.warn{background:#fcebdf}
+.stat b{font-variant-numeric:tabular-nums}
+.legend{margin:0 0 14px}
+.legend .lt{font-size:12px;color:#52627f;margin:0 0 8px}
+.legend ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.legend li{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;font-size:13px;font-weight:500}
+.legend li i{width:8px;height:8px;border-radius:50%;background:currentColor}
+.s-red{background:#fdecec;color:#b42318}
+.s-yellow{background:#fff3cf;color:#7a5200}
+.s-green{background:#e0f4e8;color:#17703f}
+.s-blue{background:#e2ecfd;color:#1450b8}
+.chart{height:220px;border:1px dashed #c6d2e6;border-radius:12px;background:#f7f9fd}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;min-width:720px;font-size:14px}
+th,td{padding:10px 12px;border-bottom:1px solid #dbe3f0;text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{color:#52627f;font-weight:500}
+.full{margin-top:20px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.full .wide{grid-column:1 / -1}
+@media (max-width:960px){
+.layout{grid-template-columns:minmax(0,1fr)}
+.side{position:static}
+.wrap{padding:24px 18px 48px}
+}
+@media (max-width:640px){
+.wrap{padding:18px 14px 40px}
+.hd h1{font-size:24px}
+.card{padding:16px;border-radius:14px}
+.blk{padding:14px}
+.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.meal-add{grid-template-columns:1fr 1fr}
+.meal-add .name{grid-column:1 / -1}
+.meal-add button{grid-column:1 / -1}
+.row button{flex:1 1 100%}
+.datebox{width:100%}
+.full{grid-template-columns:minmax(0,1fr)}
+}
+
+svg text{fill:#52627f;font-size:11px}
+a.edit{color:#1d5bd8;font-weight:500}
+.meal{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid #dbe3f0;font-size:14px}
+.meal span:nth-child(2){margin-left:auto;color:#52627f}
+.meal button,td button{min-height:36px;padding:4px 12px;font-size:13px;background:#fdecec;color:#b42318}
+
+</style>
+</head>
+<body>
+<div class="page">
+<div class="wrap">
+<header class="hd">
+<div>
+<h1>身體數據與飲食日記</h1>
+<p>記錄身體組成、運動與飲食，並產生每日與每週建議。</p>
+</div>
+<div class="datebox"><label for="date">日期</label><input id="date" type="date"></div>
+</header>
+
+<div class="layout">
+<div class="col">
+<section class="card">
+<h2>個人設定</h2>
+<div class="grid">
+<div><label for="sex">性別</label><select id="sex"><option value="m">男</option><option value="f">女</option></select></div>
+<div><label for="age">年齡（歲）</label><input id="age" type="number" inputmode="numeric" placeholder="[年齡]"></div>
+<div><label for="height">身高（cm）</label><input id="height" type="number" inputmode="decimal" placeholder="[身高]"></div>
+<div><label for="goal">目標</label><select id="goal"><option value="cut">減脂</option><option value="keep">維持</option><option value="bulk">增肌</option></select></div>
+</div>
+</section>
+
+<section class="card">
+<h2>今日紀錄</h2>
+<div class="blk">
+<h3>身體數據</h3>
+<div class="grid">
+<div><label for="weight">體重（kg）</label><input id="weight" type="number" inputmode="decimal"></div>
+<div><label for="fat">體脂率（%）</label><input id="fat" type="number" inputmode="decimal"></div>
+<div><label for="muscle">骨骼肌率（%）</label><input id="muscle" type="number" inputmode="decimal"></div>
+<div><label for="bmi">BMI（可自動計算）</label><input id="bmi" type="number" inputmode="decimal"></div>
+<div><label for="bmr">基礎代謝率（kcal）</label><input id="bmr" type="number" inputmode="numeric"></div>
+<div><label for="bage">身體年齡（歲）</label><input id="bage" type="number" inputmode="numeric"></div>
+<div><label for="visc">內臟脂肪（級）</label><input id="visc" type="number" inputmode="decimal"></div>
+</div>
+</div>
+<div class="blk">
+<h3>運動</h3>
+<p class="note" style="margin:-4px 0 12px">分鐘數，沒運動就留空</p>
+<div class="grid">
+<div><label for="cardio">有氧運動（分）</label><input id="cardio" type="number" inputmode="numeric"></div>
+<div><label for="strength">重量訓練（分）</label><input id="strength" type="number" inputmode="numeric"></div>
+</div>
+<div class="sec">重量訓練部位（可複選）</div>
+<div class="chips" id="groups"><label><input type="checkbox" value="胸部">胸部</label><label><input type="checkbox" value="背部">背部</label><label><input type="checkbox" value="肩膀">肩膀</label><label><input type="checkbox" value="腿前">腿前</label><label><input type="checkbox" value="腿後">腿後</label><label><input type="checkbox" value="臀部">臀部</label><label><input type="checkbox" value="二頭">二頭</label><label><input type="checkbox" value="三頭">三頭</label><label><input type="checkbox" value="核心">核心</label></div>
+</div>
+<div class="blk">
+<h3>飲食</h3>
+<p class="note" style="margin:-4px 0 12px">可加入多筆，自動加總</p>
+<div class="meal-add">
+<div class="name"><label for="mname">餐點名稱</label><input id="mname" placeholder="例：早餐、雞胸便當"></div>
+<div><label for="mkcal">熱量（kcal）</label><input id="mkcal" type="number" inputmode="numeric"></div>
+<div><label for="mprot">蛋白質（g）</label><input id="mprot" type="number" inputmode="decimal"></div>
+<button type="button" class="ghost" id="addMeal">＋ 新增一筆</button>
+</div>
+<span id="mmsg" class="note"></span>
+<div id="meals"></div>
+<p id="mtotal" class="note" style="font-weight:700"></p>
+</div>
+<div class="row" style="margin-top:4px"><button type="button" id="save">儲存並產生建議</button><span id="msg" class="note" style="margin:0"></span></div>
+<p class="note">同一天重複儲存會更新該日資料，未填欄位會保留原值。</p>
+</section>
+</div>
+
+<aside class="col side">
+<section class="card" id="adviceCard">
+<h2>每日建議</h2>
+<div class="stats">
+<div class="stat" id="sKcal"><span>今日熱量</span><b>–</b></div>
+<div class="stat" id="sProt"><span>今日蛋白質</span><b>–</b></div>
+<div class="stat" id="sEx"><span>運動時間</span><b>–</b></div>
+<div class="stat" id="sTdee"><span>TDEE（每日總消耗）</span><b>–</b></div>
+</div>
+<div class="legend">
+<p class="lt">今日蛋白質顏色（公克／公斤體重）</p>
+<ul>
+<li class="s-red"><i></i>未達 1.0 倍・偏低</li>
+<li class="s-yellow"><i></i>1.0–1.2 倍・接近</li>
+<li class="s-green"><i></i>1.2–1.6 倍・達標</li>
+<li class="s-blue"><i></i>1.6–2.0 倍・充足</li>
+</ul>
+</div>
+<div id="tips"></div>
+<p class="note" style="margin-top:0">建議為一般健康參考，不能取代醫師或營養師的專業判斷。</p>
+</section>
+
+<section class="card">
+<h2>每週建議</h2>
+<p class="note" style="margin:-6px 0 14px">週期：<span id="wrange"></span>（週一至週日，依所選日期）</p>
+<div class="stats">
+<div class="stat" id="wDays"><span>運動天數</span><b>– / 7</b></div>
+<div class="stat" id="wRec"><span>記錄天數</span><b>–</b></div>
+<div class="stat" id="wKcal"><span>平均熱量</span><b>–</b></div>
+<div class="stat" id="wWt"><span>體重變化</span><b>–</b></div>
+</div>
+<div class="legend">
+<p class="lt">運動天數顏色（每週）</p>
+<ul>
+<li class="s-red"><i></i>0–2 天・偏少</li>
+<li class="s-yellow"><i></i>3–4 天・接近</li>
+<li class="s-green"><i></i>5 天・達標</li>
+<li class="s-blue"><i></i>6–7 天・充足</li>
+</ul>
+</div>
+<div id="wtips"></div>
+</section>
+</aside>
+</div>
+
+<div class="full">
+<section class="card wide">
+<h2>趨勢圖</h2>
+<div style="max-width:240px;margin-bottom:12px"><label for="metric">指標</label><select id="metric"></select></div>
+<div id="chart"></div>
+<p class="note">至少需要 2 筆紀錄才能畫出趨勢圖。</p>
+</section>
+
+<section class="card wide">
+<h2>歷史紀錄</h2>
+<div class="scroll">
+<table id="tbl"></table>
+</div>
+<div class="row"><button type="button" class="ghost" id="copy">複製為 CSV</button><span id="msg2" class="note" style="margin:0"></span></div>
+</section>
+</div>
+</div>
+</div>
+<script>
+const KEY='bodylog.v1';
+let mem=null;
+function load(){try{const s=localStorage.getItem(KEY);if(s)return JSON.parse(s)}catch(e){}return mem||{profile:{sex:'m',age:30,height:170,goal:'cut'},entries:{}}}
+let S=load();
+function persist(){mem=S;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+const $=id=>document.getElementById(id);
+const FB=['weight','fat','muscle','bmi','bmr','bage','visc','cardio','strength'];
+const F=FB.concat(['kcal','protein']);
+const GROUPS=['胸部','背部','肩膀','腿前','腿後','臀部','二頭','三頭','核心'];
+const gBoxes=()=>[...document.querySelectorAll('#groups input')];
+const LBL={weight:'體重 kg',fat:'體脂 %',muscle:'骨骼肌 %',bmi:'BMI',bmr:'基代 kcal',bage:'身體年齡',visc:'內臟脂肪',cardio:'有氧 分',strength:'重訓 分',kcal:'熱量 kcal',protein:'蛋白質 g'};
+const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const n=v=>v===''||v==null||isNaN(+v)?null:+v;
+const r1=x=>Math.round(x*10)/10;
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const dates=()=>Object.keys(S.entries).sort();
+
+function readProfile(){S.profile={sex:$('sex').value,age:n($('age').value)||30,height:n($('height').value)||170,goal:$('goal').value}}
+function fillProfile(){const p=S.profile;$('sex').value=p.sex;$('age').value=p.age;$('height').value=p.height;$('goal').value=p.goal}
+function fillForm(){const e=S.entries[$('date').value]||{};FB.forEach(k=>$(k).value=e[k]??'');gBoxes().forEach(c=>c.checked=(e.groups||[]).includes(c.value))}
+function autoBmi(){const w=n($('weight').value),h=S.profile.height;if(w&&h&&!$('bmi').dataset.manual)$('bmi').value=r1(w/((h/100)**2))}
+
+['sex','age','height','goal'].forEach(id=>$(id).addEventListener('change',()=>{readProfile();autoBmi();persist();render()}));
+$('weight').addEventListener('input',autoBmi);
+$('bmi').addEventListener('input',()=>{$('bmi').dataset.manual=$('bmi').value?'1':''});
+$('date').addEventListener('change',()=>{$('bmi').dataset.manual='';fillForm();render()});
+
+$('save').onclick=()=>{
+  readProfile();const d=$('date').value;if(!d){$('msg').textContent='請選擇日期';return}
+  const e=Object.assign({},S.entries[d]);
+  FB.forEach(k=>{const v=n($(k).value);if(v!=null)e[k]=v;else delete e[k]});
+  const gl=gBoxes().filter(c=>c.checked).map(c=>c.value);if(gl.length)e.groups=gl;else delete e.groups;
+  if(!Object.keys(e).length){$('msg').textContent='請至少填寫一項資料';return}
+  S.entries[d]=e;persist();render();
+  $('msg').textContent='已儲存';setTimeout(()=>$('msg').textContent='',2000);
+  $('adviceCard').scrollIntoView({behavior:'smooth'});
+};
+
+function fatRange(sex,age){
+  if(sex==='m')return age<40?[11,21]:age<60?[12,22]:[14,24];
+  return age<40?[21,32]:age<60?[23,33]:[24,35];
+}
+function muscleRange(sex){return sex==='m'?[33,39]:[24,30]}
+const protClass=r=>r<1?'s-red':r<1.2?'s-yellow':r<1.6?'s-green':r<=2?'s-blue':'';
+const exClass=d=>d<3?'s-red':d<5?'s-yellow':d===5?'s-green':'s-blue';
+function setStat(id,val,cls){const el=$(id);el.className='stat'+(cls?' '+cls:'');el.querySelector('b').textContent=val}
+
+function advice(){
+  const p=S.profile,ds=dates();if(!ds.length)return null;
+  const d=$('date').value&&S.entries[$('date').value]?$('date').value:ds[ds.length-1];
+  const e=S.entries[d];
+  const last=k=>{for(let i=ds.length-1;i>=0;i--){if(S.entries[ds[i]][k]!=null)return S.entries[ds[i]][k]}return null};
+  const w=e.weight??last('weight'),fat=e.fat??last('fat'),mus=e.muscle??last('muscle'),visc=e.visc??last('visc'),bage=e.bage??last('bage'),bmr=e.bmr??last('bmr');
+  const bmi=e.bmi??(w&&p.height?r1(w/((p.height/100)**2)):null);
+  const tips=[],add=(t,c)=>tips.push({t,c:c||''});
+  let kcalT=null,tdee=null;
+  if(bmr){tdee=Math.round(bmr*1.375);kcalT=Math.round(p.goal==='cut'?tdee-400:p.goal==='bulk'?tdee+250:tdee)}
+  if(bmi){
+    if(bmi<18.5)add('BMI '+bmi+' 偏低，體重過輕。建議適度增加熱量與優質蛋白，並搭配阻力訓練增加肌肉量。','warn');
+    else if(bmi<24)add('BMI '+bmi+' 在健康範圍（18.5–24），請維持目前的生活型態。');
+    else if(bmi<27)add('BMI '+bmi+' 屬過重（24–27），建議以每週減 0.25–0.5 kg 的速度漸進調整。','warn');
+    else add('BMI '+bmi+' 已達肥胖範圍（27 以上），建議逐步調整飲食與運動，必要時諮詢醫師或營養師。','warn');
+  }
+  if(fat!=null){
+    const [lo,hi]=fatRange(p.sex,p.age);
+    if(fat>hi)add('體脂率 '+fat+'% 高於參考範圍（'+lo+'–'+hi+'%）。優先控制熱量，並保持蛋白質攝取，避免減到肌肉。','warn');
+    else if(fat<lo)add('體脂率 '+fat+'% 低於參考範圍（'+lo+'–'+hi+'%），不建議再減脂，請確保足夠的熱量與睡眠。','warn');
+    else add('體脂率 '+fat+'% 在參考範圍（'+lo+'–'+hi+'%）內。');
+  }
+  if(mus!=null){
+    const [lo,hi]=muscleRange(p.sex);
+    if(mus<lo)add('骨骼肌率 '+mus+'% 偏低（參考 '+lo+'–'+hi+'%），建議每週 2–3 次重量訓練，並分配蛋白質到每一餐。','warn');
+    else add('骨骼肌率 '+mus+'% 屬標準或良好，持續阻力訓練以維持。');
+  }
+  if(visc!=null){
+    if(visc>=13)add('內臟脂肪 '+visc+' 級偏高（13 以上），建議減少含糖飲料與精緻澱粉、增加有氧運動，並考慮健康檢查。','warn');
+    else if(visc>=10)add('內臟脂肪 '+visc+' 級略高（10–12），建議增加每週有氧運動至 150 分鐘以上。','warn');
+    else add('內臟脂肪 '+visc+' 級在標準範圍（9 以下）。');
+  }
+  if(bage!=null&&p.age){
+    const diff=bage-p.age;
+    if(diff>2)add('身體年齡比實際年齡大 '+diff+' 歲，可從增加肌肉量與規律睡眠著手改善。','warn');
+    else if(diff<-2)add('身體年齡比實際年齡小 '+(-diff)+' 歲，表現很好！');
+    else add('身體年齡與實際年齡相近。','info');
+  }
+  const wd=ds.filter(x=>S.entries[x].weight!=null);
+  if(wd.length>=2){
+    const cur=S.entries[wd[wd.length-1]].weight;
+    const cutoff=new Date(wd[wd.length-1]);cutoff.setDate(cutoff.getDate()-7);
+    const ref=wd.filter(x=>new Date(x)<=cutoff).pop()||wd[0];
+    const refW=S.entries[ref].weight,diff=r1(cur-refW);
+    if(ref!==wd[wd.length-1]){
+      const days=Math.max(1,Math.round((new Date(wd[wd.length-1])-new Date(ref))/864e5));
+      const wk=r1(diff/days*7);
+      let t='相較 '+days+' 天前，體重'+(diff>0?'增加 ':'減少 ')+Math.abs(diff)+' kg（每週約 '+(wk>0?'+':'')+wk+' kg）。';
+      let c='info';
+      if(p.goal==='cut'){if(wk<-1){t+='減重速度偏快，容易流失肌肉，建議稍微增加熱量。';c='warn'}else if(wk>0.1){t+='目標為減脂，但體重仍在上升，可檢視每日熱量與零食。';c='warn'}else t+='進度合理，請保持。'}
+      if(p.goal==='bulk'){if(wk>0.5){t+='增重偏快，脂肪比例可能上升，可略減熱量。';c='warn'}else if(wk<0){t+='目標為增肌，但體重下降，建議增加熱量與蛋白質。';c='warn'}else t+='進度合理。'}
+      if(p.goal==='keep'){if(Math.abs(wk)>0.5){t+='波動較大，可檢視近期飲食與作息。';c='warn'}else t+='體重穩定。'}
+      add(t,c);
+    }
+  }
+  if(e.kcal!=null&&kcalT){
+    const diff=e.kcal-kcalT;
+    if(p.goal==='cut'&&diff>150)add('今日熱量 '+e.kcal+' kcal，比建議值多 '+Math.round(diff)+' kcal。明天可多選蔬菜、清淡蛋白質，並減少含糖飲料與油炸。','warn');
+    else if(p.goal==='cut'&&diff<-500)add('今日熱量 '+e.kcal+' kcal 比建議值少很多，過度節食易掉肌肉與復胖，請適量補足。','warn');
+    else if(p.goal==='bulk'&&diff<-200)add('今日熱量 '+e.kcal+' kcal 不足以增肌，建議多補 '+Math.round(-diff)+' kcal，例如加一餐澱粉＋蛋白質。','warn');
+    else add('今日熱量 '+e.kcal+' kcal 接近建議值 '+kcalT+' kcal，控制得不錯。');
+    if(e.kcal<(bmr||0))add('攝取熱量低於基礎代謝率（'+bmr+' kcal），長期如此可能影響代謝與健康。','warn');
+  }else if(e.kcal!=null&&!bmr)add('填寫基礎代謝率後，才能計算 TDEE 與每日建議熱量（以輕度活動量估算）。','info');
+  if(e.protein!=null&&w){
+    const r=e.protein/w,rr=r1(r*100)/100;
+    if(r<1)add('今日蛋白質 '+e.protein+' g（每公斤 '+rr+' g），未達體重的 1 倍，還差 '+Math.round(w-e.protein)+' g。可補一份蛋、豆腐、雞胸肉或無糖豆漿／優格。','warn');
+    else if(r<1.2)add('今日蛋白質 '+e.protein+' g（每公斤 '+rr+' g），接近目標，再補一點就能到 1.2 倍。','info');
+    else if(r<1.6)add('今日蛋白質 '+e.protein+' g（每公斤 '+rr+' g），達標。');
+    else if(r<=2)add('今日蛋白質 '+e.protein+' g（每公斤 '+rr+' g），攝取充足。');
+    else add('今日蛋白質 '+e.protein+' g（每公斤 '+rr+' g）偏高，若有腎臟相關疾病請先諮詢醫師。','info');
+  }
+  if(!e.kcal&&!e.protein)add('尚未記錄今日飲食，記得填寫熱量與蛋白質，才能得到飲食建議。','info');
+  return{tips,e,w,tdee};
+}
+
+function renderDaily(){
+  const a=advice();
+  if(!a){
+    setStat('sKcal','–');setStat('sProt','–');setStat('sEx','–');setStat('sTdee','–');
+    $('tips').innerHTML='<p class="tip info">儲存第一筆紀錄後，這裡會顯示每日建議。</p>';return;
+  }
+  const e=a.e;
+  setStat('sKcal',e.kcal!=null?e.kcal+' kcal':'–');
+  if(e.protein!=null){
+    const r=a.w?e.protein/a.w:null;
+    setStat('sProt',e.protein+' g'+(r?'（'+r1(r*10)/10+' 倍）':''),r?protClass(r):'');
+  }else setStat('sProt','–');
+  const m=(e.cardio||0)+(e.strength||0);
+  setStat('sEx',m?m+' 分':'–');
+  setStat('sTdee',a.tdee?a.tdee+' kcal':'–');
+  $('tips').innerHTML=a.tips.map(t=>'<p class="tip '+t.c+'">'+esc(t.t)+'</p>').join('');
+}
+
+function render(){renderDaily();drawChart();drawTable();renderMeals();renderWeekly()}
+
+$('metric').innerHTML=F.map(k=>'<option value="'+k+'">'+LBL[k]+'</option>').join('');
+$('metric').addEventListener('change',drawChart);
+
+function drawChart(){
+  const k=$('metric').value,pts=dates().filter(d=>S.entries[d][k]!=null).map(d=>[d,S.entries[d][k]]);
+  if(pts.length<2){$('chart').innerHTML='<p class="note">「'+LBL[k]+'」至少需要 2 筆紀錄才能畫出趨勢圖。</p>';return}
+  const W=680,H=220,L=44,R=14,T=14,B=28;
+  const vs=pts.map(p=>p[1]);let mn=Math.min(...vs),mx=Math.max(...vs);if(mn===mx){mn-=1;mx+=1}const pad=(mx-mn)*.15;mn-=pad;mx+=pad;
+  const x=i=>L+i*(W-L-R)/(pts.length-1),y=v=>T+(1-(v-mn)/(mx-mn))*(H-T-B);
+  let g='';
+  for(let i=0;i<=4;i++){const v=mn+(mx-mn)*i/4,yy=y(v);g+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+yy+'" y2="'+yy+'" stroke="#dbe3f0"/><text x="'+(L-6)+'" y="'+(yy+4)+'" text-anchor="end">'+r1(v)+'</text>'}
+  const step=Math.ceil(pts.length/6);
+  pts.forEach((p,i)=>{if(i%step===0||i===pts.length-1)g+='<text x="'+x(i)+'" y="'+(H-8)+'" text-anchor="middle">'+p[0].slice(5)+'</text>'});
+  const line=pts.map((p,i)=>(i?'L':'M')+x(i)+' '+y(p[1])).join(' ');
+  g+='<path d="'+line+'" fill="none" stroke="#1d5bd8" stroke-width="2.5" stroke-linejoin="round"/>';
+  pts.forEach((p,i)=>g+='<circle cx="'+x(i)+'" cy="'+y(p[1])+'" r="3.5" fill="#1d5bd8"><title>'+p[0]+'：'+p[1]+'</title></circle>');
+  $('chart').innerHTML='<svg viewBox="0 0 '+W+' '+H+'" width="100%" role="img" aria-label="'+LBL[k]+'趨勢圖">'+g+'</svg>';
+}
+
+function drawTable(){
+  const ds=dates().reverse();
+  if(!ds.length){$('tbl').innerHTML='<tr><td>尚無紀錄</td></tr>';return}
+  $('tbl').innerHTML='<tr><th>日期</th>'+F.map(k=>'<th>'+LBL[k]+'</th>').join('')+'<th>重訓部位</th><th></th></tr>'+
+  ds.map(d=>'<tr><td><a href="#" data-d="'+d+'" class="edit">'+d+'</a></td>'+F.map(k=>'<td>'+(S.entries[d][k]??'–')+'</td>').join('')+'<td>'+((S.entries[d].groups||[]).join('、')||'–')+'</td><td><button data-del="'+d+'">刪除</button></td></tr>').join('');
+}
+$('tbl').addEventListener('click',ev=>{
+  const t=ev.target;
+  if(t.dataset.del){if(confirm('刪除 '+t.dataset.del+' 的紀錄？')){delete S.entries[t.dataset.del];persist();fillForm();render()}}
+  else if(t.classList.contains('edit')){ev.preventDefault();$('date').value=t.dataset.d;$('bmi').dataset.manual='';fillForm();render();$('date').scrollIntoView({behavior:'smooth'})}
+});
+$('copy').onclick=async()=>{
+  const csv=['date,'+F.join(',')].concat(dates().map(d=>d+','+F.map(k=>S.entries[d][k]??'').join(','))).join('\n');
+  try{await navigator.clipboard.writeText(csv);$('msg2').textContent='已複製，可貼到試算表'}catch(e){$('msg2').textContent='無法存取剪貼簿'}
+  setTimeout(()=>$('msg2').textContent='',2500);
+};
+
+const getMeals=e=>e&&e.meals?e.meals:(e&&(e.kcal!=null||e.protein!=null)?[{n:'當日合計',k:e.kcal||0,p:e.protein||0}]:[]);
+function setMeals(d,ms){
+  const e=S.entries[d]||(S.entries[d]={});
+  if(ms.length){e.meals=ms;e.kcal=Math.round(ms.reduce((a,m)=>a+m.k,0));e.protein=r1(ms.reduce((a,m)=>a+m.p,0))}
+  else{delete e.meals;delete e.kcal;delete e.protein}
+  if(!Object.keys(e).length)delete S.entries[d];
+  persist();render();
+}
+$('addMeal').onclick=()=>{
+  const d=$('date').value,k=n($('mkcal').value),p=n($('mprot').value);
+  if(!d||(k==null&&p==null)){$('mmsg').textContent='請填寫熱量或蛋白質';return}
+  setMeals(d,getMeals(S.entries[d]).concat([{n:$('mname').value.trim()||'餐點',k:k||0,p:p||0}]));
+  ['mname','mkcal','mprot'].forEach(i=>$(i).value='');$('mmsg').textContent='';$('mname').focus();
+};
+function renderMeals(){
+  const d=$('date').value,ms=getMeals(S.entries[d]),e=S.entries[d]||{};
+  $('meals').innerHTML=ms.length?ms.map((m,i)=>'<div class="meal"><span>'+esc(m.n)+'</span><span>'+m.k+' kcal · '+m.p+' g</span><button data-m="'+i+'">刪除</button></div>').join(''):'<p class="note">這天還沒有飲食紀錄。</p>';
+  $('mtotal').textContent=ms.length?'今日合計：'+(e.kcal||0)+' kcal，蛋白質 '+(e.protein||0)+' g':'';
+}
+$('meals').addEventListener('click',ev=>{
+  const i=ev.target.dataset.m;if(i==null)return;
+  const d=$('date').value,ms=getMeals(S.entries[d]).slice();ms.splice(+i,1);setMeals(d,ms);
+});
+
+function fmt(x){return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')}
+function renderWeekly(){
+  const cur=new Date(($('date').value||today())+'T00:00:00'),s=new Date(cur);s.setDate(cur.getDate()-(cur.getDay()+6)%7);
+  const en=new Date(s);en.setDate(s.getDate()+6);const a=fmt(s),b=fmt(en),g=S.profile.goal;
+  $('wrange').textContent=a+' ～ '+b;
+  const ds=dates().filter(d=>d>=a&&d<=b),es=ds.map(d=>S.entries[d]);
+  if(!ds.length){
+    setStat('wDays','– / 7');setStat('wRec','–');setStat('wKcal','–');setStat('wWt','–');
+    $('wtips').innerHTML='<p class="tip info">這週還沒有紀錄。</p>';return;
+  }
+  const sum=k=>es.reduce((t,e)=>t+(e[k]||0),0);
+  const exd=es.filter(e=>(e.cardio||0)+(e.strength||0)>0).length,cardio=sum('cardio'),str=sum('strength'),strD=es.filter(e=>e.strength>0).length;
+  const avg=k=>{const v=es.filter(e=>e[k]!=null).map(e=>e[k]);return v.length?r1(v.reduce((x,y)=>x+y,0)/v.length):null};
+  const ak=avg('kcal'),ap=avg('protein');
+  const wv=es.filter(e=>e.weight!=null).map(e=>e.weight),wd=wv.length>=2?r1(wv[wv.length-1]-wv[0]):null;
+  const all=dates();let wl=null;for(let i=all.length-1;i>=0;i--){if(S.entries[all[i]].weight!=null){wl=S.entries[all[i]].weight;break}}
+  setStat('wDays',exd+' / 7',exClass(exd));
+  setStat('wRec',ds.length+' 天');
+  setStat('wKcal',ak!=null?ak+' kcal':'–');
+  setStat('wWt',wd!=null?(wd>0?'+':'')+wd+' kg':'–');
+  const t=[],add=(x,c)=>t.push('<p class="tip '+(c||'')+'">'+esc(x)+'</p>');
+  if(exd===0)add('這週還沒有運動紀錄。可以先從每週 3 天、每次 30 分鐘的快走或騎車開始。','warn');
+  else if(exd<3)add('這週運動 '+exd+' 天，偏少。建議提高到每週 3–5 天，並分散在不同日子。','warn');
+  else if(exd<5)add('這週運動 '+exd+' 天，接近理想頻率，再多一兩天就能達標。','info');
+  else if(exd===5)add('這週運動 5 天，頻率理想，請持續。');
+  else add('這週運動 '+exd+' 天，頻率很高。請安排 1 天休息或輕鬆活動，讓身體恢復。','info');
+  add(cardio<150?'這週有氧累計 '+cardio+' 分鐘，距離每週 150 分鐘的建議量還差 '+(150-cardio)+' 分鐘。':'這週有氧累計 '+cardio+' 分鐘，已達每週 150 分鐘的建議量。',cardio<150?'info':'');
+  if(strD<(g==='bulk'?3:2))add('這週重量訓練 '+strD+' 天，'+(g==='bulk'?'增肌建議每週 3–4 天':'建議每週至少 2 天')+'，以腿、背、胸等大肌群為主，有助保留與增加肌肉。','warn');
+  else add('這週重量訓練 '+strD+' 天，達到建議頻率。');
+  const gs=new Set(es.flatMap(e=>e.groups||[]));
+  if(gs.size){const miss=GROUPS.filter(x=>!gs.has(x));if(miss.length)add('本週已訓練：'+[...gs].join('、')+'。尚未訓練：'+miss.join('、')+'，可安排在接下來的訓練日。','info');else add('本週重訓部位已涵蓋全身，很完整。')}
+  if(wd!=null){
+    if(g==='cut'){if(wd>0.3)add('目標為減脂，但本週體重增加 '+wd+' kg。可檢視每日熱量、零食與含糖飲料。','warn');else if(wd<-1)add('本週體重下降 '+(-wd)+' kg，速度偏快，容易流失肌肉，建議稍微增加熱量與蛋白質。','warn');else add('本週體重變化在合理範圍，減脂節奏不錯。')}
+    else if(g==='bulk'){if(wd<0)add('目標為增肌，但本週體重下降，建議增加熱量與蛋白質，並在運動日多補一餐。','warn');else if(wd>0.7)add('本週增重 '+wd+' kg 偏快，脂肪比例可能上升，可略減熱量。','warn');else add('本週增重速度合理。')}
+    else{if(Math.abs(wd)>0.7)add('本週體重波動 '+(wd>0?'+':'')+wd+' kg，可檢視近期飲食與作息。','warn');else add('本週體重穩定。')}
+  }
+  if(ap!=null&&wl){const r=ap/wl;
+    if(r<1)add('本週平均蛋白質 '+ap+' g，未達體重的 1 倍（'+Math.round(wl)+' g）。可把蛋白質平均分配到每餐，運動日更要補足。','warn');
+    else if(r<1.2)add('本週平均蛋白質 '+ap+' g，接近目標，再提高一些會更理想。','info');
+    else add('本週平均蛋白質 '+ap+' g（約 '+r1(r*10)/10+' 倍體重），達到目標。')}
+  if(ds.length<4)add('這週只有 '+ds.length+' 天有紀錄，多記錄幾天，建議會更準確。','info');
+  $('wtips').innerHTML=t.join('');
+}
+
+$('date').value=today();fillProfile();fillForm();render();
+
+</script>
+</body>
+</html>
