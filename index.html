@@ -91,7 +91,10 @@ input[type=date]{-webkit-appearance:none;appearance:none;display:block;min-width
 .danger{background:#fdecec;color:#b42318}
 .row .grow{flex:1 1 auto}
 @media (max-width:640px){.datebox{min-width:0;width:100%}input[type=date]{width:100%}.row button{flex:1 1 100%}}
+.btnlink{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 20px;border-radius:10px;background:#e6eefc;color:#164aae;font-weight:700;text-decoration:none}
+@media (max-width:640px){.btnlink{flex:1 1 100%}}
 </style>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
 <div class="page">
@@ -138,6 +141,8 @@ input[type=date]{-webkit-appearance:none;appearance:none;display:block;min-width
 <div><label for="cardio">有氧運動（分）</label><input id="cardio" type="number" inputmode="numeric"></div>
 <div><label for="strength">重量訓練（分）</label><input id="strength" type="number" inputmode="numeric"></div>
 </div>
+<div class="sec">有氧運動項目（可複選）</div>
+<div class="chips" id="ctypes"><label><input type="checkbox" value="爬坡走">爬坡走</label><label><input type="checkbox" value="橢圓機">橢圓機</label><label><input type="checkbox" value="腳踏車">腳踏車</label></div>
 <div class="sec">重量訓練部位（可複選）</div>
 <div class="chips" id="groups"><label><input type="checkbox" value="胸部">胸部</label><label><input type="checkbox" value="背部">背部</label><label><input type="checkbox" value="肩膀">肩膀</label><label><input type="checkbox" value="腿前">腿前</label><label><input type="checkbox" value="腿後">腿後</label><label><input type="checkbox" value="臀部">臀部</label><label><input type="checkbox" value="二頭">二頭</label><label><input type="checkbox" value="三頭">三頭</label><label><input type="checkbox" value="核心">核心</label></div>
 </div>
@@ -166,7 +171,7 @@ input[type=date]{-webkit-appearance:none;appearance:none;display:block;min-width
 <div class="stat" id="sKcal"><span>今日熱量</span><b>–</b></div>
 <div class="stat" id="sProt"><span>今日蛋白質</span><b>–</b></div>
 <div class="stat" id="sEx"><span>運動時間</span><b>–</b></div>
-<div class="stat" id="sTdee"><span>TDEE（每日總消耗）</span><b>–</b></div>
+<div class="stat" id="sDef"><span>熱量赤字</span><b>–</b></div>
 </div>
 <div class="legend" id="lgP" hidden>
 <p class="lt">今日蛋白質顏色（公克／公斤體重）</p>
@@ -175,6 +180,14 @@ input[type=date]{-webkit-appearance:none;appearance:none;display:block;min-width
 <li class="s-yellow"><i></i>1.0–1.2 倍・接近</li>
 <li class="s-green"><i></i>1.2–1.6 倍・達標</li>
 <li class="s-blue"><i></i>1.6–2.0 倍・充足</li>
+</ul>
+</div>
+<div class="legend" id="lgD" hidden>
+<p class="lt">熱量赤字顏色（攝取 − 消耗，負值為赤字）</p>
+<ul>
+<li class="s-green"><i></i>-300～-500 kcal・理想</li>
+<li class="s-yellow"><i></i>0～-300 kcal・偏少</li>
+<li class="s-red"><i></i>其他・盈餘或赤字過大</li>
 </ul>
 </div>
 <div id="tips"></div>
@@ -218,17 +231,19 @@ input[type=date]{-webkit-appearance:none;appearance:none;display:block;min-width
 <table id="tbl"></table>
 </div>
 <div class="row"><button type="button" class="ghost" id="copy">複製為 CSV</button><button type="button" class="ghost" id="exp">匯出備份</button><button type="button" class="ghost" id="imp">匯入備份</button><input type="file" id="impFile" accept="application/json,.json" hidden><span id="msg2" class="note" style="margin:0"></span></div>
-<p class="note">資料只存在這個瀏覽器裡。換手機、換瀏覽器或清除網站資料都會看不到，建議定期按「匯出備份」存下檔案，或使用下方的雲端同步。</p>
+<p class="note">資料只存在這個瀏覽器裡。換手機、換瀏覽器或清除網站資料都會看不到，建議定期按「匯出備份」存下檔案，或使用下方的 Google 登入同步。</p>
 </section>
 
-<section class="card wide">
-<h2>雲端同步（Google 試算表）</h2>
-<p class="note" style="margin:-6px 0 14px">設定後，每次儲存、修改或刪除都會同步到你的試算表。網址與密碼只存在這個瀏覽器，不會上傳到 GitHub。</p>
-<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">
-<div style="grid-column:1 / -1"><label for="syncUrl">試算表網址（Apps Script 網頁應用程式網址）</label><input id="syncUrl" type="url" placeholder="https://script.google.com/macros/s/…/exec"></div>
-<div><label for="syncPwd">自訂密碼</label><input id="syncPwd" type="password" autocomplete="off"></div>
+<section class="card wide" id="authCard">
+<h2>Google 帳號與雲端同步</h2>
+<p class="note" style="margin:-6px 0 14px">登入後，你的紀錄會存在你自己 Google 雲端硬碟裡的一份試算表「身體數據與飲食日記」。換手機或換電腦登入同一個帳號就能看到。本網站沒有伺服器，不會收集你的資料。按「儲存並產生建議」、刪除紀錄或匯入備份時會同步，也可以隨時按「立即同步」。</p>
+<div id="authOut" hidden><button type="button" id="gIn">使用 Google 登入</button></div>
+<div id="authIn" hidden>
+<p id="whoami" style="margin:0 0 12px;font-weight:700"></p>
+<div class="row" style="margin-top:0"><button type="button" id="syncNow">立即同步</button><a class="btnlink" id="openSheet" href="#" target="_blank" rel="noopener" hidden>開啟我的試算表</a><button type="button" class="ghost" id="gOut">登出</button></div>
 </div>
-<div class="row"><button type="button" id="syncSave">儲存設定並同步</button><button type="button" class="ghost" id="syncNow">立即同步</button><button type="button" class="ghost" id="syncOff">清除設定</button><span id="syncMsg" class="note" style="margin:0"></span></div>
+<p class="note" id="authOff" hidden>此網站尚未設定 Google 登入，目前資料只存在這個瀏覽器。</p>
+<p id="syncMsg" class="note" style="margin-top:10px"></p>
 </section>
 </div>
 </div>
@@ -238,16 +253,17 @@ const KEY='bodylog.v1';
 let mem=null;
 function load(){try{const s=localStorage.getItem(KEY);if(s)return JSON.parse(s)}catch(e){}return mem||{profile:{sex:'m',age:30,height:170,goal:'cut'},entries:{}}}
 let S=load();
-const SK='bodylog.sync',DK='bodylog.dirty';
-let SY=(()=>{try{return JSON.parse(localStorage.getItem(SK))||{}}catch(e){return{}}})();
-let ptmr=null;
+const lget=k=>{try{return localStorage.getItem(k)}catch(e){return null}},lset=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}},ldel=k=>{try{localStorage.removeItem(k)}catch(e){}};
+const DK='bodylog.dirty',UK='bodylog.user',NK='bodylog.uname';
+const G={on:false,token:null,exp:0,email:'',name:'',sid:'',pulled:false};
 function persist(){mem=S;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){const w=document.getElementById('storeWarn');if(w)w.hidden=false}
-  if(SY.url){try{localStorage.setItem(DK,'1')}catch(e){}clearTimeout(ptmr);ptmr=setTimeout(pushNow,800)}}
+  if(G.on){lset(DK,'1');const m=document.getElementById('syncMsg');if(m)m.textContent='有尚未同步的變更，按「儲存並產生建議」或「立即同步」會送到試算表'}}
 const $=id=>document.getElementById(id);
 const FB=['weight','fat','muscle','bmi','bmr','bage','visc','cardio','strength'];
 const F=FB.concat(['kcal','protein']);
 const GROUPS=['胸部','背部','肩膀','腿前','腿後','臀部','二頭','三頭','核心'];
 const gBoxes=()=>[...document.querySelectorAll('#groups input')];
+const cBoxes=()=>[...document.querySelectorAll('#ctypes input')];
 const LBL={weight:'體重 kg',fat:'體脂 %',muscle:'骨骼肌 %',bmi:'BMI',bmr:'基代 kcal',bage:'身體年齡',visc:'內臟脂肪',cardio:'有氧 分',strength:'重訓 分',kcal:'熱量 kcal',protein:'蛋白質 g'};
 const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
 const n=v=>v===''||v==null||isNaN(+v)?null:+v;
@@ -257,7 +273,7 @@ const dates=()=>Object.keys(S.entries).sort();
 
 function readProfile(){S.profile={sex:$('sex').value,age:n($('age').value)||30,height:n($('height').value)||170,goal:$('goal').value}}
 function fillProfile(){const p=S.profile;$('sex').value=p.sex;$('age').value=p.age;$('height').value=p.height;$('goal').value=p.goal}
-function fillForm(){const e=S.entries[$('date').value]||{};FB.forEach(k=>$(k).value=e[k]??'');gBoxes().forEach(c=>c.checked=(e.groups||[]).includes(c.value))}
+function fillForm(){const e=S.entries[$('date').value]||{};FB.forEach(k=>$(k).value=e[k]??'');gBoxes().forEach(c=>c.checked=(e.groups||[]).includes(c.value));cBoxes().forEach(c=>c.checked=(e.ctypes||[]).includes(c.value))}
 function autoBmi(){const w=n($('weight').value),h=S.profile.height;if(w&&h&&!$('bmi').dataset.manual)$('bmi').value=r1(w/((h/100)**2))}
 
 ['sex','age','height','goal'].forEach(id=>$(id).addEventListener('change',()=>{readProfile();autoBmi();persist();render()}));
@@ -270,8 +286,9 @@ $('save').onclick=()=>{
   const e=Object.assign({},S.entries[d]);
   FB.forEach(k=>{const v=n($(k).value);if(v!=null)e[k]=v;else delete e[k]});
   const gl=gBoxes().filter(c=>c.checked).map(c=>c.value);if(gl.length)e.groups=gl;else delete e.groups;
+  const ct=cBoxes().filter(c=>c.checked).map(c=>c.value);if(ct.length)e.ctypes=ct;else delete e.ctypes;
   if(!Object.keys(e).length){$('msg').textContent='請至少填寫一項資料';return}
-  S.entries[d]=e;persist();render();
+  S.entries[d]=e;persist();render();pushNow();
   $('msg').textContent='已儲存';setTimeout(()=>$('msg').textContent='',2000);
   $('adviceCard').scrollIntoView({behavior:'smooth'});
 };
@@ -285,98 +302,96 @@ const protClass=r=>r<1?'s-red':r<1.2?'s-yellow':r<1.6?'s-green':r<=2?'s-blue':''
 const exClass=d=>d<3?'s-red':d<5?'s-yellow':d===5?'s-green':'s-blue';
 function setStat(id,val,cls){const el=$(id);el.className='stat'+(cls?' '+cls:'');el.querySelector('b').textContent=val}
 
+const trunc1=x=>(Math.floor(x*10)/10).toFixed(1);
+function pack2(list,cap){
+  cap=cap||520;let tot=0;const keep=new Set();
+  [1,2,3].forEach(pr=>list.forEach((it,i)=>{if(it.pr!==pr)return;const n=[...it.t].length;if(tot+n<=cap){tot+=n;keep.add(i)}}));
+  const paras=[[],[],[]];list.forEach((it,i)=>{if(keep.has(i))paras[it.p].push(it.t)});
+  return{paras:paras.map(a=>a.join('')).filter(Boolean),n:tot};
+}
+const tipHtml=pk=>'<div class="tip info">'+pk.paras.map(p=>'<p style="margin:0 0 8px">'+esc(p)+'</p>').join('')+'</div>';
+const CARDIO=['爬坡走','橢圓機','腳踏車'];
+
 function advice(){
   const p=S.profile,ds=dates();if(!ds.length)return null;
-  const d=$('date').value&&S.entries[$('date').value]?$('date').value:ds[ds.length-1];
+  const sel=$('date').value,d=S.entries[sel]?sel:ds[ds.length-1];
   const e=S.entries[d];
   const last=k=>{for(let i=ds.length-1;i>=0;i--){if(S.entries[ds[i]][k]!=null)return S.entries[ds[i]][k]}return null};
-  const w=e.weight??last('weight'),fat=e.fat??last('fat'),mus=e.muscle??last('muscle'),visc=e.visc??last('visc'),bage=e.bage??last('bage'),bmr=e.bmr??last('bmr');
+  const w=e.weight??last('weight'),fat=e.fat??last('fat'),mus=e.muscle??last('muscle'),visc=e.visc??last('visc');
   const bmi=e.bmi??(w&&p.height?r1(w/((p.height/100)**2)):null);
-  const tips=[],add=(t,c)=>tips.push({t,c:c||''});
-  let kcalT=null,tdee=null;
-  if(bmr){tdee=Math.round(bmr*1.375);kcalT=Math.round(p.goal==='cut'?tdee-400:p.goal==='bulk'?tdee+250:tdee)}
-  if(bmi){
-    if(bmi<18.5)add('BMI '+bmi+' 偏低，體重過輕。建議適度增加熱量與優質蛋白，並搭配阻力訓練增加肌肉量。','warn');
-    else if(bmi<24)add('BMI '+bmi+' 在健康範圍（18.5–24），請維持目前的生活型態。');
-    else if(bmi<27)add('BMI '+bmi+' 屬過重（24–27），建議以每週減 0.25–0.5 kg 的速度漸進調整。','warn');
-    else add('BMI '+bmi+' 已達肥胖範圍（27 以上），建議逐步調整飲食與運動，必要時諮詢醫師或營養師。','warn');
+  let def=null;
+  if(w&&p.height&&p.age){
+    const bmr=10*w+6.25*p.height-5*p.age+(p.sex==='m'?5:-161);
+    const from=new Date(d+'T00:00:00');from.setDate(from.getDate()-6);const f=fmt(from);
+    const exd=ds.filter(x=>x>=f&&x<=d&&((S.entries[x].cardio||0)+(S.entries[x].strength||0))>0).length;
+    const fac=exd>=6?1.725:exd>=3?1.55:exd>=1?1.375:1.2;
+    if(e.kcal!=null)def=Math.round(bmr*fac-e.kcal);
   }
-  if(fat!=null){
-    const [lo,hi]=fatRange(p.sex,p.age);
-    if(fat>hi)add('體脂率 '+fat+'% 高於參考範圍（'+lo+'–'+hi+'%）。優先控制熱量，並保持蛋白質攝取，避免減到肌肉。','warn');
-    else if(fat<lo)add('體脂率 '+fat+'% 低於參考範圍（'+lo+'–'+hi+'%），不建議再減脂，請確保足夠的熱量與睡眠。','warn');
-    else add('體脂率 '+fat+'% 在參考範圍（'+lo+'–'+hi+'%）內。');
-  }
-  if(mus!=null){
-    const [lo,hi]=muscleRange(p.sex);
-    if(mus<lo)add('骨骼肌率 '+mus+'% 偏低（參考 '+lo+'–'+hi+'%），建議每週 2–3 次重量訓練，並分配蛋白質到每一餐。','warn');
-    else add('骨骼肌率 '+mus+'% 屬標準或良好，持續阻力訓練以維持。');
-  }
-  if(visc!=null){
-    if(visc>=13)add('內臟脂肪 '+visc+' 級偏高（13 以上），建議減少含糖飲料與精緻澱粉、增加有氧運動，並考慮健康檢查。','warn');
-    else if(visc>=10)add('內臟脂肪 '+visc+' 級略高（10–12），建議增加每週有氧運動至 150 分鐘以上。','warn');
-    else add('內臟脂肪 '+visc+' 級在標準範圍（9 以下）。');
-  }
-  if(bage!=null&&p.age){
-    const diff=bage-p.age;
-    if(diff>2)add('身體年齡比實際年齡大 '+diff+' 歲，可從增加肌肉量與規律睡眠著手改善。','warn');
-    else if(diff<-2)add('身體年齡比實際年齡小 '+(-diff)+' 歲，表現很好！');
-    else add('身體年齡與實際年齡相近。','info');
+  const g=p.goal,L=[],add=(pa,pr,t)=>L.push({p:pa,pr,t});
+  const m=(e.cardio||0)+(e.strength||0),ct=e.ctypes||[];
+  add(0,1,m>=30&&e.kcal!=null?'今天有運動、也有記錄飲食，這份自律很不容易，先給自己一點掌聲。':m>0?'今天你動起來了，這一步比想像中難，值得被肯定。':'願意每天記錄，本身就是很棒的開始，不用急著追求完美。');
+  if(def!=null){
+    const x=def;let t;
+    if(g==='cut')t=x<0?'今天攝取比消耗多約 '+(-x)+' kcal，偶爾一天沒關係，重點是明天回到節奏。':x<300?'今天熱量赤字約 '+x+' kcal，方向是對的，還有一點空間，不用急，慢慢來反而更穩。':x<=500?'今天熱量赤字約 '+x+' kcal，落在理想區間，既能穩定減脂又不會太辛苦。':'今天熱量赤字約 '+x+' kcal，有點大，太用力容易掉肌肉，也容易突然暴食，明天可以吃多一點。';
+    else if(g==='bulk')t=x>0?'今天熱量還沒追上消耗（差約 '+x+' kcal），想增肌就要吃夠，可以補一餐澱粉加蛋白質。':-x<=400?'今天熱量盈餘約 '+(-x)+' kcal，對增肌很有幫助，吃得剛剛好。':'今天熱量盈餘約 '+(-x)+' kcal，稍微偏多，脂肪比例可能跟著上升。';
+    else t=Math.abs(x)<=250?'今天熱量和消耗幾乎打平，維持得很穩。':(x>0?'今天比消耗少吃約 '+x+' kcal':'今天比消耗多吃約 '+(-x)+' kcal')+'，和維持目標有些落差，明天微調就好。';
+    add(0,1,t);
+  }else add(0,1,e.kcal==null?'今天還沒記錄飲食，補上熱量，就能算出你的熱量赤字。':'填好體重、身高與年齡，就能算出你的熱量赤字。');
+  if(e.protein!=null&&w){
+    const r=e.protein/w;
+    add(0,1,'蛋白質 '+e.protein+' g，約 '+trunc1(r)+' 倍體重，'+(r<1?'還差一點點，補一份蛋、豆腐或雞胸肉就能跟上。':r<1.2?'已經很接近目標了，再多一點就能達標。':r<1.6?'剛好達標，你的肌肉會感謝你。':r<=2?'攝取充足，對維持肌肉非常有幫助。':'偏高了一些，記得多喝水並維持飲食均衡。'));
   }
   const wd=ds.filter(x=>S.entries[x].weight!=null);
   if(wd.length>=2){
-    const cur=S.entries[wd[wd.length-1]].weight;
-    const cutoff=new Date(wd[wd.length-1]);cutoff.setDate(cutoff.getDate()-7);
-    const ref=wd.filter(x=>new Date(x)<=cutoff).pop()||wd[0];
-    const refW=S.entries[ref].weight,diff=r1(cur-refW);
-    if(ref!==wd[wd.length-1]){
-      const days=Math.max(1,Math.round((new Date(wd[wd.length-1])-new Date(ref))/864e5));
-      const wk=r1(diff/days*7);
-      let t='相較 '+days+' 天前，體重'+(diff>0?'增加 ':'減少 ')+Math.abs(diff)+' kg（每週約 '+(wk>0?'+':'')+wk+' kg）。';
-      let c='info';
-      if(p.goal==='cut'){if(wk<-1){t+='減重速度偏快，容易流失肌肉，建議稍微增加熱量。';c='warn'}else if(wk>0.1){t+='目標為減脂，但體重仍在上升，可檢視每日熱量與零食。';c='warn'}else t+='進度合理，請保持。'}
-      if(p.goal==='bulk'){if(wk>0.5){t+='增重偏快，脂肪比例可能上升，可略減熱量。';c='warn'}else if(wk<0){t+='目標為增肌，但體重下降，建議增加熱量與蛋白質。';c='warn'}else t+='進度合理。'}
-      if(p.goal==='keep'){if(Math.abs(wk)>0.5){t+='波動較大，可檢視近期飲食與作息。';c='warn'}else t+='體重穩定。'}
-      add(t,c);
+    const lastD=wd[wd.length-1],cut=new Date(lastD);cut.setDate(cut.getDate()-7);
+    const ref=wd.filter(x=>new Date(x)<=cut).pop()||wd[0];
+    if(ref!==lastD){
+      const days=Math.max(1,Math.round((new Date(lastD)-new Date(ref))/864e5)),diff=r1(S.entries[lastD].weight-S.entries[ref].weight),wk=diff/days*7;
+      const bad=(g==='cut'&&(wk>0.1||wk<-1))||(g==='bulk'&&wk<0);
+      add(0,2,bad?'體重短期會被水分和作息影響，單日數字不代表什麼，先看整體趨勢，別被一天的起伏左右心情。':diff===0?'近 '+days+' 天體重很穩定，這也是一種進步。':'近 '+days+' 天體重'+(diff>0?'增加':'減少')+' '+Math.abs(diff)+' kg，趨勢很不錯，請繼續保持。');
     }
   }
-  if(e.kcal!=null&&kcalT){
-    const diff=e.kcal-kcalT;
-    if(p.goal==='cut'&&diff>150)add('今日熱量 '+e.kcal+' kcal，比建議值多 '+Math.round(diff)+' kcal。明天可多選蔬菜、清淡蛋白質，並減少含糖飲料與油炸。','warn');
-    else if(p.goal==='cut'&&diff<-500)add('今日熱量 '+e.kcal+' kcal 比建議值少很多，過度節食易掉肌肉與復胖，請適量補足。','warn');
-    else if(p.goal==='bulk'&&diff<-200)add('今日熱量 '+e.kcal+' kcal 不足以增肌，建議多補 '+Math.round(-diff)+' kcal，例如加一餐澱粉＋蛋白質。','warn');
-    else add('今日熱量 '+e.kcal+' kcal 接近建議值 '+kcalT+' kcal，控制得不錯。');
-    if(e.kcal<(bmr||0))add('攝取熱量低於基礎代謝率（'+bmr+' kcal），長期如此可能影響代謝與健康。','warn');
-  }else if(e.kcal!=null&&!bmr)add('填寫基礎代謝率後，才能計算 TDEE 與每日建議熱量（以輕度活動量估算）。','info');
-  if(e.protein!=null&&w){
-    const r=e.protein/w,rr=r1(r*100)/100;
-    if(r<1)add('今日蛋白質 '+e.protein+' g（每公斤 '+rr+' g），未達體重的 1 倍，還差 '+Math.round(w-e.protein)+' g。可補一份蛋、豆腐、雞胸肉或無糖豆漿／優格。','warn');
-    else if(r<1.2)add('今日蛋白質 '+e.protein+' g（每公斤 '+rr+' g），接近目標，再補一點就能到 1.2 倍。','info');
-    else if(r<1.6)add('今日蛋白質 '+e.protein+' g（每公斤 '+rr+' g），達標。');
-    else if(r<=2)add('今日蛋白質 '+e.protein+' g（每公斤 '+rr+' g），攝取充足。');
-    else add('今日蛋白質 '+e.protein+' g（每公斤 '+rr+' g）偏高，若有腎臟相關疾病請先諮詢醫師。','info');
-  }
-  if(!e.kcal&&!e.protein)add('尚未記錄今日飲食，記得填寫熱量與蛋白質，才能得到飲食建議。','info');
-  return{tips,e,w,tdee};
+  if(bmi)add(0,2,'BMI '+bmi+(bmi<18.5?'，略偏瘦，記得吃夠並搭配重訓。':bmi<24?'，落在健康範圍，這是很好的基礎。':bmi<27?'，稍微偏高，用循序漸進的方式調整就好。':'，建議慢慢調整並留意健康檢查，不必著急。'));
+  if(fat!=null){const[lo,hi]=fatRange(p.sex,p.age);if(fat>hi)add(0,3,'體脂率 '+fat+'% 略高於參考範圍，穩定的赤字加重訓會有幫助。');else if(fat<lo)add(0,3,'體脂率 '+fat+'% 偏低，請照顧好熱量與睡眠。')}
+  if(mus!=null&&mus<muscleRange(p.sex)[0])add(0,3,'骨骼肌率 '+mus+'% 還有成長空間，重訓會是好幫手。');
+  if(visc!=null&&visc>=10)add(0,3,'內臟脂肪 '+visc+' 級偏高，增加有氧會有幫助。');
+  if(e.protein!=null&&w&&e.protein/w<1.2)add(1,1,'明天可以在早餐加一顆蛋或一杯無糖豆漿，把蛋白質平均分到三餐，會比晚上一次補齊輕鬆。');
+  if(def!=null&&g==='cut'&&def<300)add(1,1,'晚餐可以先吃蔬菜和蛋白質、再吃主食，飲料換成無糖，往理想赤字靠近一點。');
+  if(def!=null&&g==='cut'&&def>500)add(1,1,'明天正餐別刻意少吃，多一份地瓜或水果，讓身體有足夠的能量。');
+  if(m===0)add(1,1,'今天沒運動也沒關係，明天先走 20 分鐘或踩腳踏車，把動起來的門檻放低。');
+  else if(ct.length){const o=CARDIO.filter(x=>!ct.includes(x));add(1,1,'今天的有氧選了'+ct.join('、')+'，很棒！'+(o.length?'下次可以換成'+o.join('或')+'，變換刺激能讓身體更有進步。':''))}
+  else if(e.cardio>0)add(1,2,'有氧可以在爬坡走、橢圓機和腳踏車之間輪流，減少單一部位的負擔。');
+  if(e.groups&&e.groups.length)add(1,2,'今天練了'+e.groups.join('、')+'，明天讓這些部位休息，換練其他部位會更有效率。');
+  add(1,3,'睡足 7 小時、白天多喝水，是減脂與增肌都用得到的隱藏助力。');
+  add(1,3,'吃得飽、睡得好、動得開心，比任何一天的完美數字都重要。');
+  add(2,1,'身體的改變需要時間，你不是在和別人比較，只是在比昨天的自己多進步一點點。');
+  add(2,2,'就算哪一天不如預期也沒關係，回到軌道的那一刻，就是繼續前進。');
+  add(2,3,'你已經做得比自己以為的更多，繼續好好照顧自己，成果會慢慢浮現。');
+  if(m>0)add(0,2,'今天共運動 '+m+' 分鐘，身體已經收到你的努力，這些累積都不會白費。');
+  add(1,2,'把今天做得好的一件事留到明天，例如先喝水、先吃蛋白質，或固定的運動時間，習慣就是這樣養成的。');
+  add(1,3,'如果覺得疲倦，休息也是計畫的一部分，讓身體恢復，才能走得更遠。');
+  add(1,3,'外食時優先選有蛋白質和蔬菜的組合就好，不必為了一餐的選擇感到罪惡。');
+  add(2,2,'減脂與增肌從來不是直線前進，有起有伏才是真實的過程，你只要持續往前走就好。');
+  add(2,3,'今天辛苦了，好好休息，明天又是新的一天。');
+  return{L,e,w,def};
 }
 
+function netClass(n){return n<=-300&&n>=-500?'s-green':n>-300&&n<=0?'s-yellow':'s-red'}
 function renderDaily(){
   const a=advice();
   if(!a){
-    setStat('sKcal','–');setStat('sProt','–');setStat('sEx','–');setStat('sTdee','–');$('lgP').hidden=true;
+    setStat('sKcal','– kcal');setStat('sProt','– g');setStat('sEx','–');setStat('sDef','–');$('lgP').hidden=true;$('lgD').hidden=true;
     $('tips').innerHTML='<p class="tip info">儲存第一筆紀錄後，這裡會顯示每日建議。</p>';return;
   }
   const e=a.e;
-  setStat('sKcal',e.kcal!=null?e.kcal+' kcal':'–');
-  if(e.protein!=null){
-    const r=a.w?e.protein/a.w:null;
-    setStat('sProt',e.protein+' g'+(r?'（'+r1(r*10)/10+' 倍）':''),r?protClass(r):'');
-  }else setStat('sProt','–');
+  setStat('sKcal',e.kcal!=null?e.kcal+' kcal':'– kcal');
+  setStat('sProt',e.protein!=null?e.protein+' g':'– g',e.protein!=null&&a.w?protClass(e.protein/a.w):'');
   const m=(e.cardio||0)+(e.strength||0);
   setStat('sEx',m?m+' 分':'–');
-  setStat('sTdee',a.tdee?a.tdee+' kcal':'–');
-  $('lgP').hidden=!(e.protein!=null&&a.w);
-  $('tips').innerHTML=a.tips.map(t=>'<p class="tip '+t.c+'">'+esc(t.t)+'</p>').join('');
+  const net=a.def==null?null:(a.def===0?0:-a.def);
+  setStat('sDef',net==null?'–':(net>0?'+'+net:net<0?'-'+(-net):'0')+' kcal',net==null?'':netClass(net));
+  $('lgP').hidden=!(e.protein!=null&&a.w);$('lgD').hidden=net==null;
+  $('tips').innerHTML=tipHtml(pack2(a.L));
 }
 
 function render(){renderDaily();drawChart();drawTable();renderMeals();renderWeekly()}
@@ -403,12 +418,12 @@ function drawChart(){
 function drawTable(){
   const ds=dates().reverse();
   if(!ds.length){$('tbl').innerHTML='<tr><td>尚無紀錄</td></tr>';return}
-  $('tbl').innerHTML='<tr><th>日期</th>'+F.map(k=>'<th>'+LBL[k]+'</th>').join('')+'<th>重訓部位</th><th></th></tr>'+
-  ds.map(d=>'<tr><td><a href="#" data-d="'+d+'" class="edit">'+d+'</a></td>'+F.map(k=>'<td>'+(S.entries[d][k]??'–')+'</td>').join('')+'<td>'+((S.entries[d].groups||[]).join('、')||'–')+'</td><td><button data-del="'+d+'">刪除</button></td></tr>').join('');
+  $('tbl').innerHTML='<tr><th>日期</th>'+F.map(k=>'<th>'+LBL[k]+'</th>').join('')+'<th>有氧項目</th><th>重訓部位</th><th></th></tr>'+
+  ds.map(d=>'<tr><td><a href="#" data-d="'+d+'" class="edit">'+d+'</a></td>'+F.map(k=>'<td>'+(S.entries[d][k]??'–')+'</td>').join('')+'<td>'+((S.entries[d].ctypes||[]).join('、')||'–')+'</td><td>'+((S.entries[d].groups||[]).join('、')||'–')+'</td><td><button data-del="'+d+'">刪除</button></td></tr>').join('');
 }
 $('tbl').addEventListener('click',ev=>{
   const t=ev.target;
-  if(t.dataset.del){if(confirm('刪除 '+t.dataset.del+' 的紀錄？')){delete S.entries[t.dataset.del];persist();fillForm();render()}}
+  if(t.dataset.del){if(confirm('刪除 '+t.dataset.del+' 的紀錄？')){delete S.entries[t.dataset.del];persist();fillForm();render();pushNow()}}
   else if(t.classList.contains('edit')){ev.preventDefault();$('date').value=t.dataset.d;$('bmi').dataset.manual='';fillForm();render();$('date').scrollIntoView({behavior:'smooth'})}
 });
 $('copy').onclick=async()=>{
@@ -449,7 +464,7 @@ function renderWeekly(){
   const ds=dates().filter(d=>d>=a&&d<=b),es=ds.map(d=>S.entries[d]);
   if(!ds.length){
     $('lgW').hidden=true;setStat('wDays','– / 7');setStat('wRec','–');setStat('wKcal','–');setStat('wWt','–');
-    $('wtips').innerHTML='<p class="tip info">這週還沒有紀錄。</p>';return;
+    $('wtips').innerHTML='<p class="tip info">這週還沒有紀錄，從今天記下第一筆開始，一步一步來，你做得到。</p>';return;
   }
   const sum=k=>es.reduce((t,e)=>t+(e[k]||0),0);
   const exd=es.filter(e=>(e.cardio||0)+(e.strength||0)>0).length,cardio=sum('cardio'),str=sum('strength'),strD=es.filter(e=>e.strength>0).length;
@@ -461,35 +476,41 @@ function renderWeekly(){
   setStat('wRec',ds.length+' 天');
   setStat('wKcal',ak!=null?ak+' kcal':'–');
   setStat('wWt',wd!=null?(wd>0?'+':'')+wd+' kg':'–');
-  const t=[],add=(x,c)=>t.push('<p class="tip '+(c||'')+'">'+esc(x)+'</p>');
-  if(exd===0)add('這週還沒有運動紀錄。可以先從每週 3 天、每次 30 分鐘的快走或騎車開始。','warn');
-  else if(exd<3)add('這週運動 '+exd+' 天，偏少。建議提高到每週 3–5 天，並分散在不同日子。','warn');
-  else if(exd<5)add('這週運動 '+exd+' 天，接近理想頻率，再多一兩天就能達標。','info');
-  else if(exd===5)add('這週運動 5 天，頻率理想，請持續。');
-  else add('這週運動 '+exd+' 天，頻率很高。請安排 1 天休息或輕鬆活動，讓身體恢復。','info');
-  add(cardio<150?'這週有氧累計 '+cardio+' 分鐘，距離每週 150 分鐘的建議量還差 '+(150-cardio)+' 分鐘。':'這週有氧累計 '+cardio+' 分鐘，已達每週 150 分鐘的建議量。',cardio<150?'info':'');
-  if(strD<(g==='bulk'?3:2))add('這週重量訓練 '+strD+' 天，'+(g==='bulk'?'增肌建議每週 3–4 天':'建議每週至少 2 天')+'，以腿、背、胸等大肌群為主，有助保留與增加肌肉。','warn');
-  else add('這週重量訓練 '+strD+' 天，達到建議頻率。');
-  const gs=new Set(es.flatMap(e=>e.groups||[]));
-  if(gs.size){const miss=GROUPS.filter(x=>!gs.has(x));if(miss.length)add('本週已訓練：'+[...gs].join('、')+'。尚未訓練：'+miss.join('、')+'，可安排在接下來的訓練日。','info');else add('本週重訓部位已涵蓋全身，很完整。')}
-  if(wd!=null){
-    if(g==='cut'){if(wd>0.3)add('目標為減脂，但本週體重增加 '+wd+' kg。可檢視每日熱量、零食與含糖飲料。','warn');else if(wd<-1)add('本週體重下降 '+(-wd)+' kg，速度偏快，容易流失肌肉，建議稍微增加熱量與蛋白質。','warn');else add('本週體重變化在合理範圍，減脂節奏不錯。')}
-    else if(g==='bulk'){if(wd<0)add('目標為增肌，但本週體重下降，建議增加熱量與蛋白質，並在運動日多補一餐。','warn');else if(wd>0.7)add('本週增重 '+wd+' kg 偏快，脂肪比例可能上升，可略減熱量。','warn');else add('本週增重速度合理。')}
-    else{if(Math.abs(wd)>0.7)add('本週體重波動 '+(wd>0?'+':'')+wd+' kg，可檢視近期飲食與作息。','warn');else add('本週體重穩定。')}
-  }
-  if(ap!=null&&wl){const r=ap/wl;
-    if(r<1)add('本週平均蛋白質 '+ap+' g，未達體重的 1 倍（'+Math.round(wl)+' g）。可把蛋白質平均分配到每餐，運動日更要補足。','warn');
-    else if(r<1.2)add('本週平均蛋白質 '+ap+' g，接近目標，再提高一些會更理想。','info');
-    else add('本週平均蛋白質 '+ap+' g（約 '+r1(r*10)/10+' 倍體重），達到目標。')}
-  if(ds.length<4)add('這週只有 '+ds.length+' 天有紀錄，多記錄幾天，建議會更準確。','info');
-  $('wtips').innerHTML=t.join('');
+  const L=[],add=(pa,pr,t)=>L.push({p:pa,pr,t}),sl=g==='bulk'?3:2,pf=S.profile;
+  const ct=[...new Set(es.flatMap(e=>e.ctypes||[]))],gs=new Set(es.flatMap(e=>e.groups||[]));
+  let wnet=null;
+  if(wl&&pf.height&&pf.age&&ak!=null){const bm=10*wl+6.25*pf.height-5*pf.age+(pf.sex==='m'?5:-161);wnet=Math.round(ak-bm*(exd>=6?1.725:exd>=3?1.55:exd>=1?1.375:1.2))}
+  add(0,1,exd===0?'這週還沒開始運動也沒關係，願意記錄就已經踏出第一步了。':exd<3?'這週運動了 '+exd+' 天，已經比不動強很多，這是很好的起點。':exd<5?'這週運動了 '+exd+' 天，節奏漸漸穩了，你比自己想的更有毅力。':exd===5?'這週運動了 5 天，頻率很理想，這份自律真的很了不起。':'這週運動了 '+exd+' 天，非常拚！也要記得讓身體休息，才會進步。');
+  add(0,1,'有氧累計 '+cardio+' 分鐘'+(ct.length?'（'+ct.join('、')+'）':'')+(cardio<150?'，距離每週 150 分鐘還差 '+(150-cardio)+' 分鐘，慢慢補上就好。':'，已達每週建議量，心肺會越來越有力。'));
+  add(0,2,strD>=sl?'重訓 '+strD+' 天，肌肉正在默默變強。':'重訓 '+strD+' 天，再多安排一天，肌肉會更有感。');
+  if(wd!=null){const bad=(g==='cut'&&(wd>0.3||wd<-1))||(g==='bulk'&&wd<0)||(g==='keep'&&Math.abs(wd)>0.7);
+    add(0,1,'本週體重'+(wd>0?'增加 ':wd<0?'減少 ':'持平')+(wd?Math.abs(wd)+' kg':'')+(bad?'，和目標有些落差，但一週的波動很常見，先觀察下週趨勢，不必焦慮。':'，變化合理，保持這個節奏就好。'))}
+  if(wnet!=null)add(0,1,'平均每日熱量約比消耗'+(wnet<0?'少 '+(-wnet):'多 '+wnet)+' kcal'+(wnet<-500?'，赤字偏大，記得吃夠。':wnet<=-300?'，剛好落在理想區間。':wnet<0?'，赤字還小，再微調一點就好。':'，目前是盈餘，想減脂可再少吃一點或多動一點。'));
+  if(ap!=null&&wl){const r=ap/wl;add(0,2,'平均蛋白質 '+ap+' g，約 '+trunc1(r)+' 倍體重'+(r<1?'，還差一點，慢慢補上。':r<1.2?'，已接近達標。':'，達標，很棒。'))}
+  add(1,1,exd<3?'下週先設定動 3 天，固定在幾個時段，養成習慣最重要。':exd<5?'下週試著再多加 1 天輕鬆有氧，節奏就會更穩。':'下週維持頻率，並安排 1 至 2 天輕鬆活動或休息。');
+  const mc=CARDIO.filter(x=>!ct.includes(x));
+  add(1,2,'有氧可以輪流安排爬坡走、橢圓機和腳踏車，'+(mc.length&&ct.length?'這週還沒試'+mc.join('、')+'，下週可以加進來。':'讓身體保持新鮮感。'));
+  const miss=GROUPS.filter(x=>!gs.has(x));
+  if(gs.size&&miss.length)add(1,2,'本週還沒練到'+miss.join('、')+'，可以排進下週的重訓日。');
+  if(ap!=null&&wl&&ap/wl<1.2)add(1,1,'把蛋白質平均分到每餐，會比單餐補足更容易達成。');
+  if(ds.length<4)add(1,2,'多記錄幾天，下週的分析會更準確。');
+  add(1,3,'睡眠與喝水是看不見卻很關鍵的幫手，下週也別忽略。');
+  add(2,1,'一週一週累積，就是你的改變。不用完美，持續就會有成果。');
+  add(2,2,'你願意回頭檢視自己的進度，這份用心本身就值得被肯定。');
+  add(2,3,'慢慢來，比較快。下週也一起好好照顧自己。');
+  add(0,3,'這週有 '+ds.length+' 天留下紀錄，代表你正認真對待自己的身體，這份用心很珍貴。');
+  add(1,2,'挑一個最容易做到的小目標，例如固定每週三、五、日運動，做到之後再慢慢增加。');
+  add(1,3,'遇到忙碌的一週，縮短時間也算數，15 分鐘的快走勝過完全不動。');
+  add(2,2,'下週的你，會感謝這週願意記錄、願意調整的自己。');
+  add(2,3,'無論數字如何，你已經走在改變的路上，請為自己感到驕傲。');
+  $('wtips').innerHTML=tipHtml(pack2(L));
 }
 
 $('delDay').onclick=()=>{
   const d=$('date').value;
   if(!d||!S.entries[d]){$('msg').textContent='這天沒有可刪除的紀錄';setTimeout(()=>$('msg').textContent='',2000);return}
   if(!confirm('確定刪除 '+d+' 的所有紀錄？此動作無法復原。'))return;
-  delete S.entries[d];persist();$('bmi').dataset.manual='';fillForm();render();
+  delete S.entries[d];persist();$('bmi').dataset.manual='';fillForm();render();pushNow();
   $('msg').textContent='已刪除 '+d+' 的紀錄';setTimeout(()=>$('msg').textContent='',2500);
 };
 $('exp').onclick=()=>{
@@ -507,7 +528,7 @@ $('impFile').addEventListener('change',ev=>{
       if(!r||typeof r.entries!=='object')throw new Error('bad');
       if(!confirm('匯入會與目前紀錄合併，同一天的資料以備份檔為準。要繼續嗎？'))return;
       S={profile:r.profile||S.profile,entries:Object.assign({},S.entries,r.entries)};
-      persist();fillProfile();fillForm();render();$('msg2').textContent='已匯入備份';
+      persist();fillProfile();fillForm();render();pushNow();$('msg2').textContent='已匯入備份';
     }catch(e){$('msg2').textContent='備份檔格式不正確'}
     ev.target.value='';setTimeout(()=>$('msg2').textContent='',3000);
   };
@@ -515,51 +536,129 @@ $('impFile').addEventListener('change',ev=>{
 });
 try{localStorage.setItem('__t','1');localStorage.removeItem('__t')}catch(e){$('storeWarn').hidden=false}
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
+const GCID='在這裡貼上你的用戶端ID';
+const SCOPES='openid email profile https://www.googleapis.com/auth/drive.file';
+const TITLE='身體數據與飲食日記';
+const HEAD=['日期','體重(kg)','體脂率(%)','骨骼肌率(%)','BMI','基礎代謝率(kcal)','身體年齡','內臟脂肪','有氧(分)','重訓(分)','熱量(kcal)','蛋白質(g)','重訓部位','餐點明細','有氧項目'];
+const KEYS=['weight','fat','muscle','bmi','bmr','bage','visc','cardio','strength','kcal','protein'];
+const defData=()=>({profile:{sex:'m',age:30,height:170,goal:'cut'},entries:{}});
 const setSync=t=>{$('syncMsg').textContent=t};
-async function call(action,data){
-  const r=await fetch(SY.url,{method:'POST',body:JSON.stringify({action,token:SY.pwd,data})});
-  const j=await r.json();if(!j.ok)throw new Error(j.error||'失敗');return j;
-}
-async function pushNow(){
-  if(!SY.url)return;setSync('同步中…');
-  try{await call('push',S);try{localStorage.removeItem(DK)}catch(e){}setSync('已同步 '+new Date().toLocaleTimeString())}
-  catch(e){setSync('同步失敗：'+e.message+'（資料仍保存在這個瀏覽器，下次開啟會再試）')}
-}
-async function pullNow(){
-  if(!SY.url)return;setSync('讀取中…');
-  try{
-    const d=(await call('pull')).data;
-    if(d&&d.entries&&Object.keys(d.entries).length){
-      S={profile:d.profile&&d.profile.sex?d.profile:S.profile,entries:d.entries};
-      try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}
-      fillProfile();fillForm();render();setSync('已從試算表載入 '+new Date().toLocaleTimeString());
-    }else if(Object.keys(S.entries).length){await pushNow()}
-    else setSync('已連線，試算表目前沒有資料');
-  }catch(e){setSync('讀取失敗：'+e.message)}
-}
-$('syncSave').onclick=async()=>{
-  const u=$('syncUrl').value.trim(),p=$('syncPwd').value;
-  if(!/^https:\/\/script\.google\.com\/.+\/exec/.test(u)){setSync('網址格式不正確，應該是 https://script.google.com/…/exec');return}
-  if(!p){setSync('請輸入密碼');return}
-  SY={url:u,pwd:p};try{localStorage.setItem(SK,JSON.stringify(SY))}catch(e){}
-  setSync('連線中…');
-  try{
-    const d=(await call('pull')).data;
-    if(d&&d.entries&&Object.keys(d.entries).length){
-      S={profile:S.profile,entries:Object.assign({},d.entries,S.entries)};
-      persist();fillProfile();fillForm();render();
-    }else{await pushNow()}
-    setSync('設定完成，已與試算表合併並同步（同一天的資料以這個瀏覽器為準）');
-  }catch(e){setSync('連線失敗：'+e.message+'。請確認網址、密碼，以及部署時「誰可以存取」選「所有人」')}
-};
-$('syncNow').onclick=()=>{if(!SY.url){setSync('請先填寫網址與密碼並儲存設定');return}localStorage.getItem(DK)?pushNow():pullNow()};
-$('syncOff').onclick=()=>{
-  SY={};try{localStorage.removeItem(SK);localStorage.removeItem(DK)}catch(e){}
-  $('syncUrl').value='';$('syncPwd').value='';setSync('已清除設定。資料仍保留在這個瀏覽器與試算表中');
-};
-$('date').value=today();fillProfile();fillForm();render();
-if(SY.url){$('syncUrl').value=SY.url;$('syncPwd').value=SY.pwd||'';localStorage.getItem(DK)?pushNow():pullNow()}
+const nowT=()=>new Date().toLocaleTimeString();
+const tokenOk=()=>G.token&&Date.now()<G.exp-60000;
+const storeLocal=()=>{mem=S;lset(KEY,JSON.stringify(S))};
+const refreshUI=()=>{fillProfile();fillForm();render()};
 
+function renderAuth(){
+  const ok=/\.apps\.googleusercontent\.com$/.test(GCID);
+  $('authOff').hidden=ok;$('authOut').hidden=!ok||G.on;$('authIn').hidden=!G.on;
+  if(G.on){
+    $('whoami').textContent='已登入：'+(G.name||G.email)+(G.email&&G.name!==G.email?'（'+G.email+'）':'');
+    const sid=G.sid||lget('bodylog.sid.'+G.email),a=$('openSheet');
+    if(sid){a.href='https://docs.google.com/spreadsheets/d/'+sid;a.hidden=false}else a.hidden=true;
+  }
+}
+
+function getToken(prompt){
+  return new Promise((res,rej)=>{
+    if(tokenOk())return res(G.token);
+    if(!window.google||!google.accounts||!google.accounts.oauth2)return rej(new Error('Google 登入元件尚未載入，請檢查網路後重新整理頁面'));
+    google.accounts.oauth2.initTokenClient({
+      client_id:GCID,scope:SCOPES,hint:G.email||undefined,
+      callback:r=>{if(r.error)return rej(new Error(r.error_description||r.error));G.token=r.access_token;G.exp=Date.now()+(+r.expires_in||3600)*1000;res(G.token)},
+      error_callback:e=>rej(new Error(e&&e.type==='popup_closed'?'已取消登入':'無法開啟登入視窗，請按「立即同步」再試一次'))
+    }).requestAccessToken({prompt:prompt});
+  });
+}
+async function api(url,opt){
+  const t=await getToken('');
+  const r=await fetch(url,Object.assign({headers:{Authorization:'Bearer '+t,'Content-Type':'application/json'}},opt));
+  if(r.status===401){G.token=null;throw new Error('登入已逾時，請按「立即同步」重新連線')}
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok)throw new Error((j.error&&j.error.message)||('錯誤 '+r.status));
+  return j;
+}
+async function findOrCreate(){
+  const cached=lget('bodylog.sid.'+G.email);
+  if(cached){try{await api('https://sheets.googleapis.com/v4/spreadsheets/'+cached+'?fields=spreadsheetId');return cached}catch(e){if(!/錯誤 404|not found/i.test(e.message))throw e}}
+  const q="name='"+TITLE+"' and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false";
+  const l=await api('https://www.googleapis.com/drive/v3/files?q='+encodeURIComponent(q)+'&fields='+encodeURIComponent('files(id)')+'&orderBy=createdTime');
+  let id=l.files&&l.files[0]&&l.files[0].id;
+  if(!id){
+    const c=await api('https://sheets.googleapis.com/v4/spreadsheets',{method:'POST',body:JSON.stringify({properties:{title:TITLE},sheets:[{properties:{title:'日記'}},{properties:{title:'設定'}}]})});
+    id=c.spreadsheetId;
+  }
+  lset('bodylog.sid.'+G.email,id);return id;
+}
+async function pullData(){
+  const q='ranges='+encodeURIComponent("'日記'!A2:O")+'&ranges='+encodeURIComponent("'設定'!A1")+'&valueRenderOption=UNFORMATTED_VALUE';
+  const j=await api('https://sheets.googleapis.com/v4/spreadsheets/'+G.sid+'/values:batchGet?'+q);
+  const rows=(j.valueRanges[0]&&j.valueRanges[0].values)||[],entries={};
+  rows.forEach(r=>{
+    let d=r[0];if(d===undefined||d==='')return;
+    if(typeof d==='number')d=new Date(Math.round((d-25569)*864e5)).toISOString().slice(0,10);
+    const e={};
+    KEYS.forEach((k,i)=>{const v=r[i+1];if(v!==undefined&&v!==''&&!isNaN(+v))e[k]=+v});
+    if(r[12])e.groups=String(r[12]).split('、');
+    if(r[13]){try{e.meals=JSON.parse(r[13])}catch(x){}}
+    if(r[14])e.ctypes=String(r[14]).split('、');
+    entries[String(d)]=e;
+  });
+  let profile=null;try{profile=JSON.parse(j.valueRanges[1].values[0][0])}catch(x){}
+  return{entries,profile};
+}
+async function pushOnly(){
+  setSync('同步中…');
+  try{
+    if(!G.sid)G.sid=await findOrCreate();
+    const ds=Object.keys(S.entries).sort();
+    const rows=[HEAD].concat(ds.map(d=>{const e=S.entries[d];return [d].concat(KEYS.map(k=>e[k]==null?'':e[k]),[(e.groups||[]).join('、'),e.meals?JSON.stringify(e.meals):'',(e.ctypes||[]).join('、')])}));
+    const base='https://sheets.googleapis.com/v4/spreadsheets/'+G.sid+'/values';
+    await api(base+':batchClear',{method:'POST',body:JSON.stringify({ranges:["'日記'!A1:O","'設定'!A1"]})});
+    await api(base+':batchUpdate',{method:'POST',body:JSON.stringify({valueInputOption:'RAW',data:[{range:"'日記'!A1",values:rows},{range:"'設定'!A1",values:[[JSON.stringify(S.profile)]]}]})});
+    ldel(DK);renderAuth();setSync('已同步 '+nowT());
+  }catch(e){setSync('同步失敗：'+e.message+'（資料仍在這個瀏覽器，之後按「立即同步」重試）')}
+}
+async function syncAll(first){
+  setSync('同步中…');
+  try{
+    if(!G.sid)G.sid=await findOrCreate();
+    const d=await pullData(),had=Object.keys(S.entries).length,dirty=!!lget(DK);
+    let need=false;
+    if(first||dirty){
+      const keep=had>0||dirty;
+      S={profile:keep?S.profile:(d.profile&&d.profile.sex?d.profile:S.profile),entries:Object.assign({},d.entries,S.entries)};
+      need=had>0||dirty;
+    }else if(Object.keys(d.entries).length){
+      S={profile:d.profile&&d.profile.sex?d.profile:S.profile,entries:d.entries};
+    }else need=had>0;
+    G.pulled=true;storeLocal();refreshUI();renderAuth();
+    if(need)await pushOnly();else setSync('已與雲端同步 '+nowT());
+  }catch(e){setSync('同步失敗：'+e.message)}
+}
+async function pushNow(){if(!G.on)return;if(!G.pulled)return syncAll(false);return pushOnly()}
+
+$('gIn').onclick=async()=>{
+  try{
+    setSync('登入中…');await getToken('');
+    const u=await(await fetch('https://www.googleapis.com/oauth2/v3/userinfo',{headers:{Authorization:'Bearer '+G.token}})).json();
+    const prev=lget(UK);
+    G.email=u.email||'';G.name=u.name||G.email;G.on=true;lset(UK,G.email);lset(NK,G.name);
+    if(prev&&prev!==G.email){S=defData();ldel(DK);storeLocal();refreshUI()}
+    G.sid='';G.pulled=false;renderAuth();
+    await syncAll(!prev||prev!==G.email);
+  }catch(e){setSync('登入失敗：'+e.message)}
+};
+$('syncNow').onclick=()=>syncAll(false);
+$('gOut').onclick=()=>{
+  if(!confirm('登出後，這個瀏覽器上的本機紀錄會清除（已同步的資料仍保存在你的 Google 試算表）。'+(lget(DK)?'\n\n注意：還有尚未同步的變更，登出後會遺失。':'')+'\n\n確定要登出嗎？'))return;
+  ldel(DK);ldel(UK);ldel(NK);ldel(KEY);
+  Object.assign(G,{on:false,token:null,exp:0,email:'',name:'',sid:'',pulled:false});
+  S=defData();mem=null;$('bmi').dataset.manual='';refreshUI();renderAuth();setSync('已登出');
+};
+
+G.email=lget(UK)||'';G.name=lget(NK)||G.email;G.on=!!G.email;
+$('date').value=today();fillProfile();fillForm();render();renderAuth();
+if(G.on)setSync('已登入。按「立即同步」載入雲端資料（約每小時需要重新連線一次）');
 </script>
 </body>
 </html>
