@@ -7,102 +7,142 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap">
 <style>
-
-body{margin:0}
+body{margin:0;background:#f5f8ff}
 *{box-sizing:border-box}
-.page{font-family:"Space Grotesk","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;background:#f3f6fb;color:#0f1c33;font-size:15px;line-height:1.6;min-height:100%}
-.wrap{max-width:1160px;margin:0 auto;padding:32px 24px 56px}
-.hd{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:24px}
-.hd h1{margin:0;font-size:30px;line-height:1.25;letter-spacing:.01em}
-.hd p{margin:6px 0 0;color:#52627f;font-size:14px;max-width:560px}
-.datebox{display:flex;flex-direction:column;gap:4px;min-width:180px}
-.layout{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:20px;align-items:start}
-.col{display:flex;flex-direction:column;gap:20px;min-width:0}
+.page{--blue:#3b6cff;--blue-d:#2447c4;--ink:#14213d;--mut:#5b6b8c;--line:#e1e8f7;--sun:#ffc83d;--coral:#ff7a5c;--mint:#2fc9a0;--lilac:#8b7bff;font-family:"Space Grotesk","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;background:#f5f8ff;color:var(--ink);font-size:15px;line-height:1.65;min-height:100%;overflow-x:clip}
+.wrap{max-width:1160px;margin:0 auto;padding:36px 24px 64px}
+.hd{position:relative;isolation:isolate;display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:28px}
+.hd::before{content:"";position:absolute;z-index:-1;width:120px;height:120px;border-radius:50%;background:var(--sun);opacity:.35;top:-36px;right:22%}
+.hd::after{content:"";position:absolute;z-index:-1;width:60px;height:60px;border-radius:50%;background:var(--mint);opacity:.3;top:34px;right:calc(22% + 118px)}
+.eyebrow{display:inline-block;background:var(--ink);color:#fff;padding:3px 12px;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:.06em;margin-bottom:10px}
+.hd h1{margin:0;font-size:36px;line-height:1.2;font-weight:900;letter-spacing:.01em}
+.hd p{margin:8px 0 0;color:var(--mut);font-size:15px;max-width:520px}
+.datebox{display:flex;flex-direction:column;gap:2px;min-width:200px;max-width:100%;background:#fff;border:1.5px solid var(--line);border-radius:18px;padding:10px 16px;box-shadow:0 4px 0 #e3eaff}
+.datebox input{border:0;background:transparent;min-height:34px;padding:0;font-weight:700;font-size:16px}
+.datebox input:focus{outline:3px solid rgba(59,108,255,.3);outline-offset:4px;border-radius:6px}
+.layout{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:22px;align-items:start}
+.col{display:flex;flex-direction:column;gap:22px;min-width:0}
 .side{position:sticky;top:16px}
-.card{background:#fff;border:1px solid #dbe3f0;border-radius:16px;padding:22px}
-.card h2{margin:0 0 14px;font-size:18px}
-.blk{border:1px solid #dbe3f0;border-radius:14px;padding:16px 18px;margin-bottom:14px;background:#f9fbff}
-.blk h3{margin:0 0 12px;font-size:16px}
-.sec{font-size:12px;font-weight:700;letter-spacing:.08em;color:#1d5bd8;margin:22px 0 10px}
+.card{background:#fff;border:1.5px solid var(--line);border-radius:22px;padding:24px;box-shadow:0 5px 0 #e3eaff}
+.card h2{display:flex;align-items:center;gap:10px;margin:0 0 16px;font-size:19px;font-weight:800}
+.card h2::before{content:"";width:14px;height:14px;border-radius:50%;background:var(--dot,var(--blue));flex:none}
+.col:not(.side)>.card:nth-child(1){--dot:var(--blue)}
+.col:not(.side)>.card:nth-child(2){--dot:var(--coral)}
+.side>.card:nth-child(1){--dot:var(--mint)}
+.side>.card:nth-child(2){--dot:var(--lilac)}
+.full>.card:nth-child(1){--dot:var(--sun)}
+.full>.card:nth-child(2){--dot:var(--blue)}
+.full>.card:nth-child(3){--dot:var(--mint)}
+.blk{border:1.5px solid var(--line);border-radius:18px;padding:18px;margin-bottom:14px;background:#f8faff}
+.blk:nth-of-type(1){background:#eef3ff}
+.blk:nth-of-type(2){background:#fff3ea}
+.blk:nth-of-type(3){background:#e9f9f3}
+.blk h3{margin:0 0 12px;font-size:16px;font-weight:800;color:var(--blue-d)}
+.sec{font-size:12px;font-weight:800;letter-spacing:.08em;color:var(--blue-d);margin:22px 0 10px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
-label{display:block;font-size:13px;color:#52627f;margin-bottom:4px}
-input,select{width:100%;min-height:44px;padding:9px 12px;border:1px solid #c6d2e6;border-radius:10px;background:#f7f9fd;color:#0f1c33;font:inherit}
-input:focus,select:focus,button:focus-visible{outline:3px solid #1d5bd8;outline-offset:1px}
-button{font:inherit;min-height:44px;border:0;border-radius:10px;padding:10px 20px;background:#1d5bd8;color:#fff;font-weight:700;cursor:pointer}
-button.ghost{background:#e6eefc;color:#164aae}
-.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:18px}
-.note{font-size:13px;color:#52627f;margin:10px 0 0}
+label{display:block;font-size:13px;font-weight:700;color:var(--mut);margin-bottom:4px}
+input,select{width:100%;min-height:46px;padding:9px 14px;border:1.5px solid #d6e0f7;border-radius:14px;background:#fff;color:var(--ink);font:inherit}
+input:focus,select:focus{outline:3px solid rgba(59,108,255,.28);outline-offset:0;border-color:var(--blue)}
+button{font:inherit;min-height:46px;border:0;border-radius:999px;padding:10px 24px;background:var(--blue);color:#fff;font-weight:800;cursor:pointer;box-shadow:0 4px 0 var(--blue-d);transition:transform .08s,box-shadow .08s}
+button:hover{transform:translateY(-1px);box-shadow:0 5px 0 var(--blue-d)}
+button:active{transform:translateY(3px);box-shadow:0 1px 0 var(--blue-d)}
+button:focus-visible,.btnlink:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+button.ghost{background:#e8eeff;color:var(--blue-d);box-shadow:0 4px 0 #cfdafc}
+button.ghost:hover{box-shadow:0 5px 0 #cfdafc}
+button.ghost:active{box-shadow:0 1px 0 #cfdafc}
+.danger{background:#ffe9e4;color:#c2371a;box-shadow:0 4px 0 #ffcfc4}
+.danger:hover{box-shadow:0 5px 0 #ffcfc4}
+.danger:active{box-shadow:0 1px 0 #ffcfc4}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:20px}
+.note{font-size:13px;color:var(--mut);margin:10px 0 0}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
-.chips label{display:flex;align-items:center;gap:6px;margin:0;min-height:44px;padding:8px 16px;border:1px solid #c6d2e6;border-radius:22px;font-size:14px;color:#0f1c33;cursor:pointer;background:#fff}
-.chips input{width:auto;min-height:0;margin:0}
+.chips label{display:flex;align-items:center;gap:6px;margin:0;min-height:44px;padding:8px 16px;border:1.5px solid #d6e0f7;border-radius:999px;font-size:14px;font-weight:500;color:var(--ink);cursor:pointer;background:#fff;transition:background .12s,color .12s}
+.chips label:has(input:checked){background:var(--blue);border-color:var(--blue);color:#fff;font-weight:700}
+.chips input{width:auto;min-height:0;margin:0;accent-color:var(--sun)}
 .meal-add{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:12px;align-items:end}
 .stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:14px}
-.stat{background:#f3f6fb;border-radius:12px;padding:10px 14px}
-.stat span{display:block;font-size:12px;color:#52627f}
-.stat b{display:block;font-size:20px}
-.tip{padding:12px 14px;border-radius:12px;background:#e6eefc;margin:0 0 10px;font-size:14px}
-.tip.info{background:#eef3fb}
-.tip.warn{background:#fcebdf}
-.stat b{font-variant-numeric:tabular-nums}
+.stat{background:var(--t,#eef3ff);border-radius:18px;padding:12px 16px}
+.stat:nth-child(1){--t:#eaf0ff}
+.stat:nth-child(2){--t:#fff3cf}
+.stat:nth-child(3){--t:#dff7ee}
+.stat:nth-child(4){--t:#efeaff}
+.stat span{display:block;font-size:12px;font-weight:700;color:var(--mut)}
+.stat b{display:block;font-size:24px;font-weight:700;font-variant-numeric:tabular-nums}
+.tip{padding:14px 16px;border-radius:18px;background:#eef3ff;margin:0 0 10px;font-size:14.5px;line-height:1.75}
+.tip.info{background:#eef3ff}
+.tip.warn{background:#fff1ea}
 .legend{margin:0 0 14px}
-.legend .lt{font-size:12px;color:#52627f;margin:0 0 8px}
+.legend .lt{font-size:12px;font-weight:700;color:var(--mut);margin:0 0 8px}
 .legend ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
-.legend li{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;font-size:13px;font-weight:500}
+.legend li{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;font-size:13px;font-weight:700}
 .legend li i{width:8px;height:8px;border-radius:50%;background:currentColor}
-.s-red{background:#fdecec;color:#b42318}
-.s-yellow{background:#fff3cf;color:#7a5200}
-.s-green{background:#e0f4e8;color:#17703f}
-.s-blue{background:#e2ecfd;color:#1450b8}
-.chart{height:220px;border:1px dashed #c6d2e6;border-radius:12px;background:#f7f9fd}
+.s-red{background:#ffe3df;color:#b42318}
+.s-yellow{background:#fff0bf;color:#7a5200}
+.s-green{background:#d9f5e5;color:#17703f}
+.s-blue{background:#dde8ff;color:#1450b8}
 .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
-table{border-collapse:collapse;width:100%;min-width:720px;font-size:14px}
-th,td{padding:10px 12px;border-bottom:1px solid #dbe3f0;text-align:right;white-space:nowrap}
+table{border-collapse:separate;border-spacing:0;width:100%;min-width:760px;font-size:14px}
+th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
 th:first-child,td:first-child{text-align:left}
-th{color:#52627f;font-weight:500}
-.full{margin-top:20px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+th{background:#f1f5ff;color:var(--mut);font-weight:700;font-size:13px}
+th:first-child{border-radius:12px 0 0 12px}
+th:last-child{border-radius:0 12px 12px 0}
+svg text{fill:var(--mut);font-size:11px}
+a.edit{color:var(--blue-d);font-weight:700}
+.meal{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 0;border-bottom:1px dashed #cfd9ef;font-size:14px}
+.meal span:nth-child(2){margin-left:auto;color:var(--mut);font-weight:700}
+.meal button,td button{min-height:34px;padding:4px 14px;font-size:13px;background:#ffe9e4;color:#c2371a;box-shadow:none}
+.meal button:hover,td button:hover,.meal button:active,td button:active{transform:none;box-shadow:none}
+input[type=date]{-webkit-appearance:none;appearance:none;display:block;min-width:0;max-width:100%;line-height:1.2;text-align:left}
+.btnlink{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:10px 24px;border-radius:999px;background:#e8eeff;color:var(--blue-d);font-weight:800;text-decoration:none;box-shadow:0 4px 0 #cfdafc}
+.howto{margin:0 0 16px;border:1.5px solid #ffe29a;border-radius:18px;padding:10px 16px;background:#fff9e6}
+.howto summary{cursor:pointer;font-weight:800;min-height:32px;line-height:32px}
+.howto ol{padding-left:20px;margin:10px 0}
+.howto textarea{width:100%;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;line-height:1.5;border:1.5px solid #d6e0f7;border-radius:14px;padding:10px;background:#fff;color:var(--ink)}
+.full{margin-top:22px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
 .full .wide{grid-column:1 / -1}
 @media (max-width:960px){
 .layout{grid-template-columns:minmax(0,1fr)}
 .side{position:static}
-.wrap{padding:24px 18px 48px}
+.wrap{padding:28px 18px 52px}
+.hd::before,.hd::after{display:none}
 }
 @media (max-width:640px){
-.wrap{padding:18px 14px 40px}
-.hd h1{font-size:24px}
-.card{padding:16px;border-radius:14px}
+.wrap{padding:20px 14px 44px}
+.hd h1{font-size:28px}
+.card{padding:18px;border-radius:20px}
 .blk{padding:14px}
 .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .meal-add{grid-template-columns:1fr 1fr}
 .meal-add .name{grid-column:1 / -1}
 .meal-add button{grid-column:1 / -1}
-.row button{flex:1 1 100%}
-.datebox{width:100%}
+.row button,.btnlink{flex:1 1 100%}
+.datebox{min-width:0;width:100%}
 .full{grid-template-columns:minmax(0,1fr)}
+.stat b{font-size:21px}
 }
-
-svg text{fill:#52627f;font-size:11px}
-a.edit{color:#1d5bd8;font-weight:500}
-.meal{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid #dbe3f0;font-size:14px}
-.meal span:nth-child(2){margin-left:auto;color:#52627f}
-.meal button,td button{min-height:36px;padding:4px 12px;font-size:13px;background:#fdecec;color:#b42318}
-
-input[type=date]{-webkit-appearance:none;appearance:none;display:block;min-width:0;max-width:100%;line-height:1.2;text-align:left}
-.datebox{max-width:100%}
-.danger{background:#fdecec;color:#b42318}
-.row .grow{flex:1 1 auto}
-@media (max-width:640px){.datebox{min-width:0;width:100%}input[type=date]{width:100%}.row button{flex:1 1 100%}}
-.btnlink{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 20px;border-radius:10px;background:#e6eefc;color:#164aae;font-weight:700;text-decoration:none}
-@media (max-width:640px){.btnlink{flex:1 1 100%}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}button:hover,button:active{transform:none}}
+.chartbar{display:flex;flex-wrap:wrap;gap:12px 16px;align-items:flex-end;margin-bottom:14px}
+.metricbox{width:200px;max-width:100%}
+.seg{display:inline-flex;background:#e8eeff;border-radius:999px;padding:4px;gap:2px}
+.seg button{min-height:38px;padding:4px 18px;background:transparent;color:var(--blue-d);box-shadow:none}
+.seg button.on{background:var(--blue);color:#fff}
+.seg button:hover,.seg button:active{transform:none;box-shadow:none}
+.rangenav{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px}
+.rangenav button{min-height:38px;width:38px;padding:0;font-size:20px;line-height:1}
+.row.tri{flex-wrap:nowrap;gap:8px}
+.row.tri button{flex:1 1 0;min-width:0;padding:10px 6px;font-size:14px;white-space:nowrap}
+@media (max-width:640px){.row.tri button{font-size:13px;padding:10px 4px}.metricbox{width:100%}}
 </style>
-<script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
 <div class="page">
 <div class="wrap">
 <header class="hd">
 <div>
+<span class="eyebrow">每日健康紀錄</span>
 <h1>身體數據與飲食日記</h1>
-<p>記錄身體組成、運動與飲食，並產生每日與每週建議。</p>
+<p>記錄身體組成、運動與飲食，每天一點點，看見自己的進步。</p>
 </div>
 <div class="datebox"><label for="date">日期</label><input id="date" type="date"></div>
 </header>
@@ -114,8 +154,8 @@ input[type=date]{-webkit-appearance:none;appearance:none;display:block;min-width
 <h2>個人設定</h2>
 <div class="grid">
 <div><label for="sex">性別</label><select id="sex"><option value="m">男</option><option value="f">女</option></select></div>
-<div><label for="age">年齡（歲）</label><input id="age" type="number" inputmode="numeric" placeholder="[年齡]"></div>
-<div><label for="height">身高（cm）</label><input id="height" type="number" inputmode="decimal" placeholder="[身高]"></div>
+<div><label for="age">年齡（歲）</label><input id="age" type="number" inputmode="numeric" placeholder="例：32"></div>
+<div><label for="height">身高（cm）</label><input id="height" type="number" inputmode="decimal" placeholder="例：180"></div>
 <div><label for="goal">目標</label><select id="goal"><option value="cut">減脂</option><option value="keep">維持</option><option value="bulk">增肌</option></select></div>
 </div>
 </section>
@@ -161,6 +201,7 @@ input[type=date]{-webkit-appearance:none;appearance:none;display:block;min-width
 </div>
 <div class="row" style="margin-top:4px"><button type="button" id="save">儲存並產生建議</button><button type="button" class="danger" id="delDay">刪除這天資料</button><span id="msg" class="note" style="margin:0"></span></div>
 <p class="note">同一天重複儲存會更新該日資料，未填欄位會保留原值。要修改某一天，選擇日期後直接改欄位再儲存；要刪除，按「刪除這天資料」。</p>
+<p id="syncMsg" class="note"></p>
 </section>
 </div>
 
@@ -220,9 +261,12 @@ input[type=date]{-webkit-appearance:none;appearance:none;display:block;min-width
 <div class="full">
 <section class="card wide">
 <h2>趨勢圖</h2>
-<div style="max-width:240px;margin-bottom:12px"><label for="metric">指標</label><select id="metric"></select></div>
+<div class="chartbar">
+<div class="metricbox"><label for="metric">指標</label><select id="metric"></select></div>
+<div class="seg" id="rangeSeg" role="group" aria-label="檢視區間"><button type="button" data-r="week">週</button><button type="button" data-r="month">月</button></div>
+<div class="rangenav"><button type="button" class="ghost" id="prevR" aria-label="上一個區間">‹</button><span id="rangeLbl"></span><button type="button" class="ghost" id="nextR" aria-label="下一個區間">›</button></div>
+</div>
 <div id="chart"></div>
-<p class="note">至少需要 2 筆紀錄才能畫出趨勢圖。</p>
 </section>
 
 <section class="card wide">
@@ -230,20 +274,110 @@ input[type=date]{-webkit-appearance:none;appearance:none;display:block;min-width
 <div class="scroll">
 <table id="tbl"></table>
 </div>
-<div class="row"><button type="button" class="ghost" id="copy">複製為 CSV</button><button type="button" class="ghost" id="exp">匯出備份</button><button type="button" class="ghost" id="imp">匯入備份</button><input type="file" id="impFile" accept="application/json,.json" hidden><span id="msg2" class="note" style="margin:0"></span></div>
-<p class="note">資料只存在這個瀏覽器裡。換手機、換瀏覽器或清除網站資料都會看不到，建議定期按「匯出備份」存下檔案，或使用下方的 Google 登入同步。</p>
+<div class="row tri"><button type="button" class="ghost" id="copy">複製為 CSV</button><button type="button" class="ghost" id="exp">匯出備份</button><button type="button" class="ghost" id="imp">匯入備份</button><input type="file" id="impFile" accept="application/json,.json" hidden></div>
+<p id="msg2" class="note" style="margin:8px 0 0"></p>
+<p class="note">資料只存在這個瀏覽器裡。換手機、換瀏覽器或清除網站資料都會看不到，建議定期按「匯出備份」存下檔案。</p>
 </section>
 
-<section class="card wide" id="authCard">
-<h2>Google 帳號與雲端同步</h2>
-<p class="note" style="margin:-6px 0 14px">登入後，你的紀錄會存在你自己 Google 雲端硬碟裡的一份試算表「身體數據與飲食日記」。換手機或換電腦登入同一個帳號就能看到。本網站沒有伺服器，不會收集你的資料。按「儲存並產生建議」、刪除紀錄或匯入備份時會同步，也可以隨時按「立即同步」。</p>
-<div id="authOut" hidden><button type="button" id="gIn">使用 Google 登入</button></div>
-<div id="authIn" hidden>
-<p id="whoami" style="margin:0 0 12px;font-weight:700"></p>
-<div class="row" style="margin-top:0"><button type="button" id="syncNow">立即同步</button><a class="btnlink" id="openSheet" href="#" target="_blank" rel="noopener" hidden>開啟我的試算表</a><button type="button" class="ghost" id="gOut">登出</button></div>
+<section class="card wide" id="authCard" hidden>
+<h2>雲端同步（存到你自己的 Google 試算表）</h2>
+<p class="note" style="margin:-6px 0 14px">設定一次後，按「儲存並產生建議」、刪除紀錄或匯入備份時，資料會同步到你自己帳號下的 Google 試算表。換手機或電腦時填入同一組網址與密碼就能讀回。網址與密碼只存在這個瀏覽器，不會上傳到 GitHub。尚未設定時，資料只存在這個瀏覽器。</p>
+<details class="howto"><summary>第一次使用？照這 5 步取得同步網址</summary>
+<ol>
+<li>建立一份新的 Google 試算表。</li>
+<li>點「擴充功能」→「Apps Script」，把編輯區原本的內容全部刪掉，貼上下方的程式碼。</li>
+<li>把程式碼第 3 行的 PASSWORD 改成你自己的密碼，按磁碟片圖示儲存。</li>
+<li>按右上角「部署」→「新增部署作業」→ 類型選「網頁應用程式」，「執行身分」選「我」，「誰可以存取」選「所有人」，按「部署」並完成授權，最後複製「網頁應用程式網址」。</li>
+<li>回到這裡，貼上網址和同一組密碼，按「儲存設定並同步」。</li>
+</ol>
+<label for="gsCode">Apps Script 程式碼</label>
+<textarea id="gsCode" readonly rows="8" spellcheck="false">// 身體數據與飲食日記：Google 試算表同步程式
+// 使用前，請把下面這行的密碼改成你自己的（日記頁面要填同一組）
+const PASSWORD = '請改成你自己的密碼';
+
+const SHEET = '日記';
+const CFG = '設定';
+const HEAD = ['日期','體重(kg)','體脂率(%)','骨骼肌率(%)','BMI','基礎代謝率(kcal)','身體年齡','內臟脂肪','有氧(分)','重訓(分)','熱量(kcal)','蛋白質(g)','重訓部位','餐點明細','有氧項目'];
+const KEYS = ['weight','fat','muscle','bmi','bmr','bage','visc','cardio','strength','kcal','protein'];
+
+function json_(o) {
+  return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON);
+}
+function sheet_(name) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  return ss.getSheetByName(name) || ss.insertSheet(name);
+}
+
+// 用瀏覽器直接開部署網址時，會看到這行，代表部署成功
+function doGet() {
+  return json_({ ok: true, msg: '服務運作中' });
+}
+
+function doPost(e) {
+  let p = {};
+  try { p = JSON.parse(e.postData.contents); } catch (err) {}
+  if (p.token !== PASSWORD) return json_({ ok: false, error: '密碼錯誤' });
+  if (p.action === 'pull') return json_({ ok: true, data: read_() });
+  if (p.action === 'push') {
+    const lock = LockService.getScriptLock();
+    lock.waitLock(15000);
+    try { write_(p.data); } finally { lock.releaseLock(); }
+    return json_({ ok: true });
+  }
+  return json_({ ok: false, error: '未知動作' });
+}
+
+function read_() {
+  const sh = sheet_(SHEET), cfg = sheet_(CFG);
+  let profile = null;
+  try { profile = JSON.parse(cfg.getRange('A1').getValue()); } catch (e) {}
+  const entries = {};
+  const last = sh.getLastRow();
+  if (last &gt; 1) {
+    const rows = sh.getRange(2, 1, last - 1, HEAD.length).getValues();
+    rows.forEach(function (r) {
+      let d = r[0];
+      if (d instanceof Date) d = Utilities.formatDate(d, Session.getScriptTimeZone(), 'yyyy-MM-dd');
+      d = String(d);
+      if (!d) return;
+      const e = {};
+      KEYS.forEach(function (k, i) { if (r[i + 1] !== '') e[k] = Number(r[i + 1]); });
+      if (r[12]) e.groups = String(r[12]).split('、');
+      if (r[13]) { try { e.meals = JSON.parse(r[13]); } catch (x) {} }
+      if (r[14]) e.ctypes = String(r[14]).split('、');
+      entries[d] = e;
+    });
+  }
+  return { profile: profile, entries: entries };
+}
+
+function write_(data) {
+  const sh = sheet_(SHEET), cfg = sheet_(CFG);
+  data = data || {};
+  cfg.getRange('A1').setValue(JSON.stringify(data.profile || {}));
+  sh.clear();
+  sh.getRange(1, 1, 1, HEAD.length).setValues([HEAD]).setFontWeight('bold');
+  sh.setFrozenRows(1);
+  const ds = Object.keys(data.entries || {}).sort();
+  if (!ds.length) return;
+  const rows = ds.map(function (d) {
+    const e = data.entries[d];
+    return [d].concat(
+      KEYS.map(function (k) { return e[k] == null ? '' : e[k]; }),
+      [(e.groups || []).join('、'), e.meals ? JSON.stringify(e.meals) : '', (e.ctypes || []).join('、')]
+    );
+  });
+  sh.getRange(2, 1, rows.length, 1).setNumberFormat('@');
+  sh.getRange(2, 1, rows.length, HEAD.length).setValues(rows);
+}
+</textarea>
+<div class="row"><button type="button" class="ghost" id="copyCode">複製程式碼</button></div>
+</details>
+<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">
+<div style="grid-column:1 / -1"><label for="syncUrl">試算表同步網址（Apps Script 網頁應用程式網址）</label><input id="syncUrl" type="url" placeholder="https://script.google.com/macros/s/…/exec"></div>
+<div><label for="syncPwd">自訂密碼</label><input id="syncPwd" type="password" autocomplete="off"></div>
 </div>
-<p class="note" id="authOff" hidden>此網站尚未設定 Google 登入，目前資料只存在這個瀏覽器。</p>
-<p id="syncMsg" class="note" style="margin-top:10px"></p>
+<div class="row"><button type="button" id="syncSave">儲存設定並同步</button><button type="button" class="ghost" id="syncNow">立即同步</button><button type="button" class="ghost" id="syncOff">清除設定</button></div>
 </section>
 </div>
 </div>
@@ -251,11 +385,16 @@ input[type=date]{-webkit-appearance:none;appearance:none;display:block;min-width
 <script>
 const KEY='bodylog.v1';
 let mem=null;
-function load(){try{const s=localStorage.getItem(KEY);if(s)return JSON.parse(s)}catch(e){}return mem||{profile:{sex:'m',age:30,height:170,goal:'cut'},entries:{}}}
+function load(){try{const s=localStorage.getItem(KEY);if(s)return JSON.parse(s)}catch(e){}return mem||{profile:{sex:'m',age:32,height:180,goal:'cut'},entries:{}}}
 let S=load();
 const lget=k=>{try{return localStorage.getItem(k)}catch(e){return null}},lset=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}},ldel=k=>{try{localStorage.removeItem(k)}catch(e){}};
-const DK='bodylog.dirty',UK='bodylog.user',NK='bodylog.uname';
-const G={on:false,token:null,exp:0,email:'',name:'',sid:'',pulled:false};
+const DK='bodylog.dirty',SK='bodylog.sync';
+const G={on:false,url:'',pwd:''};
+try{const c=JSON.parse(lget(SK)||'null');if(c&&c.url){G.url=c.url;G.pwd=c.pwd||'';G.on=true}}catch(e){}
+// 直接串接：把你部署好的 Apps Script 網址與密碼填在下面兩個引號中，頁面就會自動同步，不需要任何設定畫面。
+const PRESET={url:'',pwd:''};
+const FK='bodylog.synced';
+if(PRESET.url){G.url=PRESET.url;G.pwd=PRESET.pwd;G.on=true}
 function persist(){mem=S;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){const w=document.getElementById('storeWarn');if(w)w.hidden=false}
   if(G.on){lset(DK,'1');const m=document.getElementById('syncMsg');if(m)m.textContent='有尚未同步的變更，按「儲存並產生建議」或「立即同步」會送到試算表'}}
 const $=id=>document.getElementById(id);
@@ -271,7 +410,7 @@ const r1=x=>Math.round(x*10)/10;
 const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 const dates=()=>Object.keys(S.entries).sort();
 
-function readProfile(){S.profile={sex:$('sex').value,age:n($('age').value)||30,height:n($('height').value)||170,goal:$('goal').value}}
+function readProfile(){S.profile={sex:$('sex').value,age:n($('age').value)||32,height:n($('height').value)||180,goal:$('goal').value}}
 function fillProfile(){const p=S.profile;$('sex').value=p.sex;$('age').value=p.age;$('height').value=p.height;$('goal').value=p.goal}
 function fillForm(){const e=S.entries[$('date').value]||{};FB.forEach(k=>$(k).value=e[k]??'');gBoxes().forEach(c=>c.checked=(e.groups||[]).includes(c.value));cBoxes().forEach(c=>c.checked=(e.ctypes||[]).includes(c.value))}
 function autoBmi(){const w=n($('weight').value),h=S.profile.height;if(w&&h&&!$('bmi').dataset.manual)$('bmi').value=r1(w/((h/100)**2))}
@@ -279,7 +418,7 @@ function autoBmi(){const w=n($('weight').value),h=S.profile.height;if(w&&h&&!$('
 ['sex','age','height','goal'].forEach(id=>$(id).addEventListener('change',()=>{readProfile();autoBmi();persist();render()}));
 $('weight').addEventListener('input',autoBmi);
 $('bmi').addEventListener('input',()=>{$('bmi').dataset.manual=$('bmi').value?'1':''});
-$('date').addEventListener('change',()=>{$('bmi').dataset.manual='';fillForm();render()});
+$('date').addEventListener('change',()=>{$('bmi').dataset.manual='';chartAnchor=null;fillForm();render()});
 
 $('save').onclick=()=>{
   readProfile();const d=$('date').value;if(!d){$('msg').textContent='請選擇日期';return}
@@ -304,7 +443,7 @@ function setStat(id,val,cls){const el=$(id);el.className='stat'+(cls?' '+cls:'')
 
 const trunc1=x=>(Math.floor(x*10)/10).toFixed(1);
 function pack2(list,cap){
-  cap=cap||520;let tot=0;const keep=new Set();
+  cap=cap||250;let tot=0;const keep=new Set();
   [1,2,3].forEach(pr=>list.forEach((it,i)=>{if(it.pr!==pr)return;const n=[...it.t].length;if(tot+n<=cap){tot+=n;keep.add(i)}}));
   const paras=[[],[],[]];list.forEach((it,i)=>{if(keep.has(i))paras[it.p].push(it.t)});
   return{paras:paras.map(a=>a.join('')).filter(Boolean),n:tot};
@@ -327,20 +466,17 @@ function advice(){
     const fac=exd>=6?1.725:exd>=3?1.55:exd>=1?1.375:1.2;
     if(e.kcal!=null)def=Math.round(bmr*fac-e.kcal);
   }
-  const g=p.goal,L=[],add=(pa,pr,t)=>L.push({p:pa,pr,t});
+  const g=p.goal,L=[],add=(pa,pr,t)=>L.push({p:pa,pr,t:/。$/.test(t)?t:t+'。'});
   const m=(e.cardio||0)+(e.strength||0),ct=e.ctypes||[];
-  add(0,1,m>=30&&e.kcal!=null?'今天有運動、也有記錄飲食，這份自律很不容易，先給自己一點掌聲。':m>0?'今天你動起來了，這一步比想像中難，值得被肯定。':'願意每天記錄，本身就是很棒的開始，不用急著追求完美。');
+  add(0,2,m>=30&&e.kcal!=null?'今天有運動又有記錄，很不容易，給自己一點掌聲。':m>0?'今天你動起來了，值得被肯定。':'願意記錄，就是很好的開始。');
   if(def!=null){
     const x=def;let t;
-    if(g==='cut')t=x<0?'今天攝取比消耗多約 '+(-x)+' kcal，偶爾一天沒關係，重點是明天回到節奏。':x<300?'今天熱量赤字約 '+x+' kcal，方向是對的，還有一點空間，不用急，慢慢來反而更穩。':x<=500?'今天熱量赤字約 '+x+' kcal，落在理想區間，既能穩定減脂又不會太辛苦。':'今天熱量赤字約 '+x+' kcal，有點大，太用力容易掉肌肉，也容易突然暴食，明天可以吃多一點。';
-    else if(g==='bulk')t=x>0?'今天熱量還沒追上消耗（差約 '+x+' kcal），想增肌就要吃夠，可以補一餐澱粉加蛋白質。':-x<=400?'今天熱量盈餘約 '+(-x)+' kcal，對增肌很有幫助，吃得剛剛好。':'今天熱量盈餘約 '+(-x)+' kcal，稍微偏多，脂肪比例可能跟著上升。';
-    else t=Math.abs(x)<=250?'今天熱量和消耗幾乎打平，維持得很穩。':(x>0?'今天比消耗少吃約 '+x+' kcal':'今天比消耗多吃約 '+(-x)+' kcal')+'，和維持目標有些落差，明天微調就好。';
+    if(g==='cut')t=x<0?'今天吃得比消耗多 '+(-x)+' kcal，沒關係，明天回到節奏。':x<300?'熱量赤字 '+x+' kcal，方向對了，還有一點空間。':x<=500?'熱量赤字 '+x+' kcal，落在理想區間。':'熱量赤字 '+x+' kcal 偏大，記得吃夠。';
+    else if(g==='bulk')t=x>0?'熱量比消耗少 '+x+' kcal，增肌要吃夠。':-x<=400?'熱量盈餘 '+(-x)+' kcal，對增肌很有幫助。':'熱量盈餘 '+(-x)+' kcal 偏多。';
+    else t=Math.abs(x)<=250?'熱量和消耗幾乎打平，維持得很穩。':(x>0?'比消耗少吃 '+x+' kcal':'比消耗多吃 '+(-x)+' kcal')+'，明天微調就好。';
     add(0,1,t);
-  }else add(0,1,e.kcal==null?'今天還沒記錄飲食，補上熱量，就能算出你的熱量赤字。':'填好體重、身高與年齡，就能算出你的熱量赤字。');
-  if(e.protein!=null&&w){
-    const r=e.protein/w;
-    add(0,1,'蛋白質 '+e.protein+' g，約 '+trunc1(r)+' 倍體重，'+(r<1?'還差一點點，補一份蛋、豆腐或雞胸肉就能跟上。':r<1.2?'已經很接近目標了，再多一點就能達標。':r<1.6?'剛好達標，你的肌肉會感謝你。':r<=2?'攝取充足，對維持肌肉非常有幫助。':'偏高了一些，記得多喝水並維持飲食均衡。'));
-  }
+  }else add(0,1,e.kcal==null?'補上今天的飲食，就能算出熱量赤字。':'填好體重、身高與年齡，就能算出赤字。');
+  if(e.protein!=null&&w){const r=e.protein/w;add(0,1,'蛋白質 '+e.protein+' g（約 '+trunc1(r)+' 倍體重）'+(r<1?'，還差一點，補顆蛋或豆腐吧。':r<1.2?'，快達標了。':r<1.6?'，達標。':r<=2?'，充足。':'，偏高，記得多喝水。'))}
   const wd=ds.filter(x=>S.entries[x].weight!=null);
   if(wd.length>=2){
     const lastD=wd[wd.length-1],cut=new Date(lastD);cut.setDate(cut.getDate()-7);
@@ -348,31 +484,27 @@ function advice(){
     if(ref!==lastD){
       const days=Math.max(1,Math.round((new Date(lastD)-new Date(ref))/864e5)),diff=r1(S.entries[lastD].weight-S.entries[ref].weight),wk=diff/days*7;
       const bad=(g==='cut'&&(wk>0.1||wk<-1))||(g==='bulk'&&wk<0);
-      add(0,2,bad?'體重短期會被水分和作息影響，單日數字不代表什麼，先看整體趨勢，別被一天的起伏左右心情。':diff===0?'近 '+days+' 天體重很穩定，這也是一種進步。':'近 '+days+' 天體重'+(diff>0?'增加':'減少')+' '+Math.abs(diff)+' kg，趨勢很不錯，請繼續保持。');
+      add(0,3,bad?'體重短期起伏很正常，看整體趨勢就好。':diff===0?'近 '+days+' 天體重很穩定。':'近 '+days+' 天體重'+(diff>0?'增加 ':'減少 ')+Math.abs(diff)+' kg，繼續保持。');
     }
   }
-  if(bmi)add(0,2,'BMI '+bmi+(bmi<18.5?'，略偏瘦，記得吃夠並搭配重訓。':bmi<24?'，落在健康範圍，這是很好的基礎。':bmi<27?'，稍微偏高，用循序漸進的方式調整就好。':'，建議慢慢調整並留意健康檢查，不必著急。'));
-  if(fat!=null){const[lo,hi]=fatRange(p.sex,p.age);if(fat>hi)add(0,3,'體脂率 '+fat+'% 略高於參考範圍，穩定的赤字加重訓會有幫助。');else if(fat<lo)add(0,3,'體脂率 '+fat+'% 偏低，請照顧好熱量與睡眠。')}
-  if(mus!=null&&mus<muscleRange(p.sex)[0])add(0,3,'骨骼肌率 '+mus+'% 還有成長空間，重訓會是好幫手。');
-  if(visc!=null&&visc>=10)add(0,3,'內臟脂肪 '+visc+' 級偏高，增加有氧會有幫助。');
-  if(e.protein!=null&&w&&e.protein/w<1.2)add(1,1,'明天可以在早餐加一顆蛋或一杯無糖豆漿，把蛋白質平均分到三餐，會比晚上一次補齊輕鬆。');
-  if(def!=null&&g==='cut'&&def<300)add(1,1,'晚餐可以先吃蔬菜和蛋白質、再吃主食，飲料換成無糖，往理想赤字靠近一點。');
-  if(def!=null&&g==='cut'&&def>500)add(1,1,'明天正餐別刻意少吃，多一份地瓜或水果，讓身體有足夠的能量。');
-  if(m===0)add(1,1,'今天沒運動也沒關係，明天先走 20 分鐘或踩腳踏車，把動起來的門檻放低。');
-  else if(ct.length){const o=CARDIO.filter(x=>!ct.includes(x));add(1,1,'今天的有氧選了'+ct.join('、')+'，很棒！'+(o.length?'下次可以換成'+o.join('或')+'，變換刺激能讓身體更有進步。':''))}
-  else if(e.cardio>0)add(1,2,'有氧可以在爬坡走、橢圓機和腳踏車之間輪流，減少單一部位的負擔。');
-  if(e.groups&&e.groups.length)add(1,2,'今天練了'+e.groups.join('、')+'，明天讓這些部位休息，換練其他部位會更有效率。');
-  add(1,3,'睡足 7 小時、白天多喝水，是減脂與增肌都用得到的隱藏助力。');
-  add(1,3,'吃得飽、睡得好、動得開心，比任何一天的完美數字都重要。');
-  add(2,1,'身體的改變需要時間，你不是在和別人比較，只是在比昨天的自己多進步一點點。');
-  add(2,2,'就算哪一天不如預期也沒關係，回到軌道的那一刻，就是繼續前進。');
-  add(2,3,'你已經做得比自己以為的更多，繼續好好照顧自己，成果會慢慢浮現。');
-  if(m>0)add(0,2,'今天共運動 '+m+' 分鐘，身體已經收到你的努力，這些累積都不會白費。');
-  add(1,2,'把今天做得好的一件事留到明天，例如先喝水、先吃蛋白質，或固定的運動時間，習慣就是這樣養成的。');
-  add(1,3,'如果覺得疲倦，休息也是計畫的一部分，讓身體恢復，才能走得更遠。');
-  add(1,3,'外食時優先選有蛋白質和蔬菜的組合就好，不必為了一餐的選擇感到罪惡。');
-  add(2,2,'減脂與增肌從來不是直線前進，有起有伏才是真實的過程，你只要持續往前走就好。');
-  add(2,3,'今天辛苦了，好好休息，明天又是新的一天。');
+  if(bmi)add(0,3,'BMI '+bmi+(bmi<18.5?'，略偏瘦。':bmi<24?'，在健康範圍。':bmi<27?'，稍微偏高，慢慢調整。':'，慢慢調整並留意健康。'));
+  if(fat!=null){const[lo,hi]=fatRange(p.sex,p.age);if(fat>hi)add(0,3,'體脂率 '+fat+'% 略高。');else if(fat<lo)add(0,3,'體脂率 '+fat+'% 偏低，照顧好睡眠。')}
+  if(mus!=null&&mus<muscleRange(p.sex)[0])add(0,3,'骨骼肌率 '+mus+'% 還有成長空間。');
+  if(visc!=null&&visc>=10)add(0,3,'內臟脂肪 '+visc+' 級偏高。');
+  let sug;
+  if(e.protein!=null&&w&&e.protein/w<1.2)sug='明天早餐加顆蛋或無糖豆漿，蛋白質分到三餐更輕鬆。';
+  else if(def!=null&&g==='cut'&&def<300)sug='晚餐先吃蔬菜和蛋白質，飲料改無糖，慢慢靠近理想赤字。';
+  else if(def!=null&&g==='cut'&&def>500)sug='明天正餐別少吃，加份地瓜或水果補能量。';
+  else if(m===0)sug='明天先走 20 分鐘或踩腳踏車，把門檻放低。';
+  else if(ct.length){const o=CARDIO.filter(x=>!ct.includes(x));sug=o.length?'下次有氧可換成'+o.join('或')+'，新鮮感讓進步更快。':'有氧做得很好，下次試著多撐幾分鐘。'}
+  else sug='有氧可輪流做爬坡走、橢圓機和腳踏車。';
+  add(1,1,sug);
+  if(e.groups&&e.groups.length)add(1,2,'今天練了'+e.groups.join('、')+'，明天讓它們休息，換練其他部位。');
+  add(1,3,'睡足 7 小時、多喝水，是減脂與增肌的隱藏助力。');
+  add(1,3,'外食選有蛋白質和蔬菜的組合就好，不必有罪惡感。');
+  add(2,1,'一步一步來，你已經比昨天更進步。');
+  add(2,3,'有起有伏才是真實的過程，繼續往前走就好。');
+  add(2,3,'今天辛苦了，好好休息。');
   return{L,e,w,def};
 }
 
@@ -399,21 +531,41 @@ function render(){renderDaily();drawChart();drawTable();renderMeals();renderWeek
 $('metric').innerHTML=F.map(k=>'<option value="'+k+'">'+LBL[k]+'</option>').join('');
 $('metric').addEventListener('change',drawChart);
 
+let chartMode='week',chartAnchor=null;
+function chartRange(){
+  const a=new Date((chartAnchor||$('date').value||today())+'T00:00:00');let s,e;
+  if(chartMode==='week'){s=new Date(a);s.setDate(a.getDate()-(a.getDay()+6)%7);e=new Date(s);e.setDate(s.getDate()+6)}
+  else{s=new Date(a.getFullYear(),a.getMonth(),1);e=new Date(a.getFullYear(),a.getMonth()+1,0)}
+  return[s,e];
+}
+function shiftChart(dir){
+  const a=new Date((chartAnchor||$('date').value||today())+'T00:00:00');
+  if(chartMode==='week')a.setDate(a.getDate()+7*dir);else{a.setDate(1);a.setMonth(a.getMonth()+dir)}
+  chartAnchor=fmt(a);drawChart();
+}
 function drawChart(){
-  const k=$('metric').value,pts=dates().filter(d=>S.entries[d][k]!=null).map(d=>[d,S.entries[d][k]]);
-  if(pts.length<2){$('chart').innerHTML='<p class="note">「'+LBL[k]+'」至少需要 2 筆紀錄才能畫出趨勢圖。</p>';return}
-  const W=680,H=220,L=44,R=14,T=14,B=28;
+  document.querySelectorAll('#rangeSeg button').forEach(b=>b.classList.toggle('on',b.dataset.r===chartMode));
+  const k=$('metric').value,[s,e]=chartRange(),n=Math.round((e-s)/864e5);
+  $('rangeLbl').textContent=chartMode==='week'?(s.getMonth()+1)+'/'+s.getDate()+' – '+(e.getMonth()+1)+'/'+e.getDate()+'（'+e.getFullYear()+'）':e.getFullYear()+' 年 '+(e.getMonth()+1)+' 月';
+  const a=fmt(s),b=fmt(e);
+  const pts=dates().filter(d=>d>=a&&d<=b&&S.entries[d][k]!=null).map(d=>[d,S.entries[d][k],Math.round((new Date(d+'T00:00:00')-s)/864e5)]);
+  if(!pts.length){$('chart').innerHTML='<p class="note">這段期間沒有「'+LBL[k]+'」的紀錄。</p>';return}
+  const W=Math.max(300,Math.min(680,$('chart').clientWidth||680)),H=220,L=(W<400?40:44),R=14,T=14,B=28;
   const vs=pts.map(p=>p[1]);let mn=Math.min(...vs),mx=Math.max(...vs);if(mn===mx){mn-=1;mx+=1}const pad=(mx-mn)*.15;mn-=pad;mx+=pad;
-  const x=i=>L+i*(W-L-R)/(pts.length-1),y=v=>T+(1-(v-mn)/(mx-mn))*(H-T-B);
+  const dec=(mx-mn)<1?2:1,fv=v=>(Math.round(v*10**dec)/10**dec).toFixed(dec);
+  const x=i=>L+i*(W-L-R)/n,y=v=>T+(1-(v-mn)/(mx-mn))*(H-T-B);
   let g='';
-  for(let i=0;i<=4;i++){const v=mn+(mx-mn)*i/4,yy=y(v);g+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+yy+'" y2="'+yy+'" stroke="#dbe3f0"/><text x="'+(L-6)+'" y="'+(yy+4)+'" text-anchor="end">'+r1(v)+'</text>'}
-  const step=Math.ceil(pts.length/6);
-  pts.forEach((p,i)=>{if(i%step===0||i===pts.length-1)g+='<text x="'+x(i)+'" y="'+(H-8)+'" text-anchor="middle">'+p[0].slice(5)+'</text>'});
-  const line=pts.map((p,i)=>(i?'L':'M')+x(i)+' '+y(p[1])).join(' ');
-  g+='<path d="'+line+'" fill="none" stroke="#1d5bd8" stroke-width="2.5" stroke-linejoin="round"/>';
-  pts.forEach((p,i)=>g+='<circle cx="'+x(i)+'" cy="'+y(p[1])+'" r="3.5" fill="#1d5bd8"><title>'+p[0]+'：'+p[1]+'</title></circle>');
+  for(let i=0;i<=4;i++){const v=mn+(mx-mn)*i/4,yy=y(v);g+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+yy+'" y2="'+yy+'" stroke="#e1e8f7"/><text x="'+(L-6)+'" y="'+(yy+4)+'" text-anchor="end">'+fv(v)+'</text>'}
+  const step=chartMode==='week'?1:5;
+  for(let i=0;i<=n;i++){if(chartMode==='week'||i%step===0||i===n){const d=new Date(s);d.setDate(s.getDate()+i);g+='<text x="'+x(i)+'" y="'+(H-8)+'" text-anchor="middle">'+(chartMode==='week'?(d.getMonth()+1)+'/'+d.getDate():d.getDate())+'</text>'}}
+  if(pts.length>1)g+='<path d="'+pts.map((p,i)=>(i?'L':'M')+x(p[2])+' '+y(p[1])).join(' ')+'" fill="none" stroke="#3b6cff" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>';
+  pts.forEach(p=>g+='<circle cx="'+x(p[2])+'" cy="'+y(p[1])+'" r="4" fill="#3b6cff"><title>'+p[0]+'：'+p[1]+'</title></circle>');
   $('chart').innerHTML='<svg viewBox="0 0 '+W+' '+H+'" width="100%" role="img" aria-label="'+LBL[k]+'趨勢圖">'+g+'</svg>';
 }
+document.querySelectorAll('#rangeSeg button').forEach(b=>b.addEventListener('click',()=>{chartMode=b.dataset.r;chartAnchor=null;drawChart()}));
+let rzT=null;if(window.addEventListener)window.addEventListener('resize',()=>{clearTimeout(rzT);rzT=setTimeout(drawChart,150)});
+$('prevR').onclick=()=>shiftChart(-1);
+$('nextR').onclick=()=>shiftChart(1);
 
 function drawTable(){
   const ds=dates().reverse();
@@ -424,7 +576,7 @@ function drawTable(){
 $('tbl').addEventListener('click',ev=>{
   const t=ev.target;
   if(t.dataset.del){if(confirm('刪除 '+t.dataset.del+' 的紀錄？')){delete S.entries[t.dataset.del];persist();fillForm();render();pushNow()}}
-  else if(t.classList.contains('edit')){ev.preventDefault();$('date').value=t.dataset.d;$('bmi').dataset.manual='';fillForm();render();$('date').scrollIntoView({behavior:'smooth'})}
+  else if(t.classList.contains('edit')){ev.preventDefault();$('date').value=t.dataset.d;$('bmi').dataset.manual='';chartAnchor=null;fillForm();render();$('date').scrollIntoView({behavior:'smooth'})}
 });
 $('copy').onclick=async()=>{
   const csv=['date,'+F.join(',')].concat(dates().map(d=>d+','+F.map(k=>S.entries[d][k]??'').join(','))).join('\n');
@@ -476,33 +628,24 @@ function renderWeekly(){
   setStat('wRec',ds.length+' 天');
   setStat('wKcal',ak!=null?ak+' kcal':'–');
   setStat('wWt',wd!=null?(wd>0?'+':'')+wd+' kg':'–');
-  const L=[],add=(pa,pr,t)=>L.push({p:pa,pr,t}),sl=g==='bulk'?3:2,pf=S.profile;
+  const L=[],add=(pa,pr,t)=>L.push({p:pa,pr,t:/。$/.test(t)?t:t+'。'}),sl=g==='bulk'?3:2,pf=S.profile;
   const ct=[...new Set(es.flatMap(e=>e.ctypes||[]))],gs=new Set(es.flatMap(e=>e.groups||[]));
   let wnet=null;
   if(wl&&pf.height&&pf.age&&ak!=null){const bm=10*wl+6.25*pf.height-5*pf.age+(pf.sex==='m'?5:-161);wnet=Math.round(ak-bm*(exd>=6?1.725:exd>=3?1.55:exd>=1?1.375:1.2))}
-  add(0,1,exd===0?'這週還沒開始運動也沒關係，願意記錄就已經踏出第一步了。':exd<3?'這週運動了 '+exd+' 天，已經比不動強很多，這是很好的起點。':exd<5?'這週運動了 '+exd+' 天，節奏漸漸穩了，你比自己想的更有毅力。':exd===5?'這週運動了 5 天，頻率很理想，這份自律真的很了不起。':'這週運動了 '+exd+' 天，非常拚！也要記得讓身體休息，才會進步。');
-  add(0,1,'有氧累計 '+cardio+' 分鐘'+(ct.length?'（'+ct.join('、')+'）':'')+(cardio<150?'，距離每週 150 分鐘還差 '+(150-cardio)+' 分鐘，慢慢補上就好。':'，已達每週建議量，心肺會越來越有力。'));
-  add(0,2,strD>=sl?'重訓 '+strD+' 天，肌肉正在默默變強。':'重訓 '+strD+' 天，再多安排一天，肌肉會更有感。');
+  add(0,1,exd===0?'這週還沒運動也沒關係，先記錄就是起點。':exd<3?'這週運動 '+exd+' 天，是很好的起點。':exd<5?'這週運動 '+exd+' 天，節奏漸漸穩了。':exd===5?'這週運動 5 天，頻率很理想。':'這週運動 '+exd+' 天，非常拚，記得休息。');
+  add(0,1,'有氧 '+cardio+' 分鐘'+(ct.length?'（'+ct.join('、')+'）':'')+(cardio<150?'，離 150 分鐘還差 '+(150-cardio)+'。':'，已達建議量。'));
   if(wd!=null){const bad=(g==='cut'&&(wd>0.3||wd<-1))||(g==='bulk'&&wd<0)||(g==='keep'&&Math.abs(wd)>0.7);
-    add(0,1,'本週體重'+(wd>0?'增加 ':wd<0?'減少 ':'持平')+(wd?Math.abs(wd)+' kg':'')+(bad?'，和目標有些落差，但一週的波動很常見，先觀察下週趨勢，不必焦慮。':'，變化合理，保持這個節奏就好。'))}
-  if(wnet!=null)add(0,1,'平均每日熱量約比消耗'+(wnet<0?'少 '+(-wnet):'多 '+wnet)+' kcal'+(wnet<-500?'，赤字偏大，記得吃夠。':wnet<=-300?'，剛好落在理想區間。':wnet<0?'，赤字還小，再微調一點就好。':'，目前是盈餘，想減脂可再少吃一點或多動一點。'));
-  if(ap!=null&&wl){const r=ap/wl;add(0,2,'平均蛋白質 '+ap+' g，約 '+trunc1(r)+' 倍體重'+(r<1?'，還差一點，慢慢補上。':r<1.2?'，已接近達標。':'，達標，很棒。'))}
-  add(1,1,exd<3?'下週先設定動 3 天，固定在幾個時段，養成習慣最重要。':exd<5?'下週試著再多加 1 天輕鬆有氧，節奏就會更穩。':'下週維持頻率，並安排 1 至 2 天輕鬆活動或休息。');
-  const mc=CARDIO.filter(x=>!ct.includes(x));
-  add(1,2,'有氧可以輪流安排爬坡走、橢圓機和腳踏車，'+(mc.length&&ct.length?'這週還沒試'+mc.join('、')+'，下週可以加進來。':'讓身體保持新鮮感。'));
+    add(0,2,'體重'+(wd>0?'增加 ':wd<0?'減少 ':'持平')+(wd?Math.abs(wd)+' kg':'')+(bad?'，一週的波動很常見，先看趨勢。':'，變化合理。'))}
+  add(0,2,strD>=sl?'重訓 '+strD+' 天，肌肉在默默變強。':'重訓 '+strD+' 天，再加一天會更有感。');
+  if(wnet!=null)add(0,2,'平均每日'+(wnet<0?'少吃 '+(-wnet):'多吃 '+wnet)+' kcal'+(wnet<-500?'，赤字偏大。':wnet<=-300?'，落在理想區間。':wnet<0?'，赤字還小。':'，目前是盈餘。'));
+  if(ap!=null&&wl){const r=ap/wl;add(0,3,'平均蛋白質約 '+trunc1(r)+' 倍體重'+(r<1?'，還差一點。':'，達標。'))}
+  add(1,1,exd<3?'下週先固定動 3 天，習慣最重要。':exd<5?'下週再加 1 天輕鬆有氧。':'下週維持頻率，留 1 到 2 天休息。');
   const miss=GROUPS.filter(x=>!gs.has(x));
-  if(gs.size&&miss.length)add(1,2,'本週還沒練到'+miss.join('、')+'，可以排進下週的重訓日。');
-  if(ap!=null&&wl&&ap/wl<1.2)add(1,1,'把蛋白質平均分到每餐，會比單餐補足更容易達成。');
-  if(ds.length<4)add(1,2,'多記錄幾天，下週的分析會更準確。');
-  add(1,3,'睡眠與喝水是看不見卻很關鍵的幫手，下週也別忽略。');
-  add(2,1,'一週一週累積，就是你的改變。不用完美，持續就會有成果。');
-  add(2,2,'你願意回頭檢視自己的進度，這份用心本身就值得被肯定。');
-  add(2,3,'慢慢來，比較快。下週也一起好好照顧自己。');
-  add(0,3,'這週有 '+ds.length+' 天留下紀錄，代表你正認真對待自己的身體，這份用心很珍貴。');
-  add(1,2,'挑一個最容易做到的小目標，例如固定每週三、五、日運動，做到之後再慢慢增加。');
-  add(1,3,'遇到忙碌的一週，縮短時間也算數，15 分鐘的快走勝過完全不動。');
-  add(2,2,'下週的你，會感謝這週願意記錄、願意調整的自己。');
-  add(2,3,'無論數字如何，你已經走在改變的路上，請為自己感到驕傲。');
+  if(gs.size&&miss.length)add(1,2,'尚未練到'+miss.slice(0,3).join('、')+(miss.length>3?'等':'')+'，下週排進去。');
+  add(1,3,'有氧可輪流做爬坡走、橢圓機和腳踏車。');
+  if(ds.length<4)add(1,3,'多記錄幾天，分析會更準。');
+  add(2,1,'一週一週累積，就是你的改變。');
+  add(2,3,'慢慢來，比較快，下週也一起加油。');
   $('wtips').innerHTML=tipHtml(pack2(L));
 }
 
@@ -536,129 +679,60 @@ $('impFile').addEventListener('change',ev=>{
 });
 try{localStorage.setItem('__t','1');localStorage.removeItem('__t')}catch(e){$('storeWarn').hidden=false}
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
-const GCID='在這裡貼上你的用戶端ID';
-const SCOPES='openid email profile https://www.googleapis.com/auth/drive.file';
-const TITLE='身體數據與飲食日記';
-const HEAD=['日期','體重(kg)','體脂率(%)','骨骼肌率(%)','BMI','基礎代謝率(kcal)','身體年齡','內臟脂肪','有氧(分)','重訓(分)','熱量(kcal)','蛋白質(g)','重訓部位','餐點明細','有氧項目'];
-const KEYS=['weight','fat','muscle','bmi','bmr','bage','visc','cardio','strength','kcal','protein'];
-const defData=()=>({profile:{sex:'m',age:30,height:170,goal:'cut'},entries:{}});
 const setSync=t=>{$('syncMsg').textContent=t};
 const nowT=()=>new Date().toLocaleTimeString();
-const tokenOk=()=>G.token&&Date.now()<G.exp-60000;
 const storeLocal=()=>{mem=S;lset(KEY,JSON.stringify(S))};
 const refreshUI=()=>{fillProfile();fillForm();render()};
 
-function renderAuth(){
-  const ok=/\.apps\.googleusercontent\.com$/.test(GCID);
-  $('authOff').hidden=ok;$('authOut').hidden=!ok||G.on;$('authIn').hidden=!G.on;
-  if(G.on){
-    $('whoami').textContent='已登入：'+(G.name||G.email)+(G.email&&G.name!==G.email?'（'+G.email+'）':'');
-    const sid=G.sid||lget('bodylog.sid.'+G.email),a=$('openSheet');
-    if(sid){a.href='https://docs.google.com/spreadsheets/d/'+sid;a.hidden=false}else a.hidden=true;
-  }
+async function call(action,data){
+  const r=await fetch(G.url,{method:'POST',body:JSON.stringify({action,token:G.pwd,data})});
+  let j;try{j=await r.json()}catch(e){throw new Error('回應格式不正確，請確認網址正確，且部署時「誰可以存取」選「所有人」')}
+  if(!j.ok)throw new Error(j.error||'失敗');return j;
 }
-
-function getToken(prompt){
-  return new Promise((res,rej)=>{
-    if(tokenOk())return res(G.token);
-    if(!window.google||!google.accounts||!google.accounts.oauth2)return rej(new Error('Google 登入元件尚未載入，請檢查網路後重新整理頁面'));
-    google.accounts.oauth2.initTokenClient({
-      client_id:GCID,scope:SCOPES,hint:G.email||undefined,
-      callback:r=>{if(r.error)return rej(new Error(r.error_description||r.error));G.token=r.access_token;G.exp=Date.now()+(+r.expires_in||3600)*1000;res(G.token)},
-      error_callback:e=>rej(new Error(e&&e.type==='popup_closed'?'已取消登入':'無法開啟登入視窗，請按「立即同步」再試一次'))
-    }).requestAccessToken({prompt:prompt});
-  });
-}
-async function api(url,opt){
-  const t=await getToken('');
-  const r=await fetch(url,Object.assign({headers:{Authorization:'Bearer '+t,'Content-Type':'application/json'}},opt));
-  if(r.status===401){G.token=null;throw new Error('登入已逾時，請按「立即同步」重新連線')}
-  const j=await r.json().catch(()=>({}));
-  if(!r.ok)throw new Error((j.error&&j.error.message)||('錯誤 '+r.status));
-  return j;
-}
-async function findOrCreate(){
-  const cached=lget('bodylog.sid.'+G.email);
-  if(cached){try{await api('https://sheets.googleapis.com/v4/spreadsheets/'+cached+'?fields=spreadsheetId');return cached}catch(e){if(!/錯誤 404|not found/i.test(e.message))throw e}}
-  const q="name='"+TITLE+"' and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false";
-  const l=await api('https://www.googleapis.com/drive/v3/files?q='+encodeURIComponent(q)+'&fields='+encodeURIComponent('files(id)')+'&orderBy=createdTime');
-  let id=l.files&&l.files[0]&&l.files[0].id;
-  if(!id){
-    const c=await api('https://sheets.googleapis.com/v4/spreadsheets',{method:'POST',body:JSON.stringify({properties:{title:TITLE},sheets:[{properties:{title:'日記'}},{properties:{title:'設定'}}]})});
-    id=c.spreadsheetId;
-  }
-  lset('bodylog.sid.'+G.email,id);return id;
-}
-async function pullData(){
-  const q='ranges='+encodeURIComponent("'日記'!A2:O")+'&ranges='+encodeURIComponent("'設定'!A1")+'&valueRenderOption=UNFORMATTED_VALUE';
-  const j=await api('https://sheets.googleapis.com/v4/spreadsheets/'+G.sid+'/values:batchGet?'+q);
-  const rows=(j.valueRanges[0]&&j.valueRanges[0].values)||[],entries={};
-  rows.forEach(r=>{
-    let d=r[0];if(d===undefined||d==='')return;
-    if(typeof d==='number')d=new Date(Math.round((d-25569)*864e5)).toISOString().slice(0,10);
-    const e={};
-    KEYS.forEach((k,i)=>{const v=r[i+1];if(v!==undefined&&v!==''&&!isNaN(+v))e[k]=+v});
-    if(r[12])e.groups=String(r[12]).split('、');
-    if(r[13]){try{e.meals=JSON.parse(r[13])}catch(x){}}
-    if(r[14])e.ctypes=String(r[14]).split('、');
-    entries[String(d)]=e;
-  });
-  let profile=null;try{profile=JSON.parse(j.valueRanges[1].values[0][0])}catch(x){}
-  return{entries,profile};
-}
-async function pushOnly(){
-  setSync('同步中…');
-  try{
-    if(!G.sid)G.sid=await findOrCreate();
-    const ds=Object.keys(S.entries).sort();
-    const rows=[HEAD].concat(ds.map(d=>{const e=S.entries[d];return [d].concat(KEYS.map(k=>e[k]==null?'':e[k]),[(e.groups||[]).join('、'),e.meals?JSON.stringify(e.meals):'',(e.ctypes||[]).join('、')])}));
-    const base='https://sheets.googleapis.com/v4/spreadsheets/'+G.sid+'/values';
-    await api(base+':batchClear',{method:'POST',body:JSON.stringify({ranges:["'日記'!A1:O","'設定'!A1"]})});
-    await api(base+':batchUpdate',{method:'POST',body:JSON.stringify({valueInputOption:'RAW',data:[{range:"'日記'!A1",values:rows},{range:"'設定'!A1",values:[[JSON.stringify(S.profile)]]}]})});
-    ldel(DK);renderAuth();setSync('已同步 '+nowT());
-  }catch(e){setSync('同步失敗：'+e.message+'（資料仍在這個瀏覽器，之後按「立即同步」重試）')}
+async function pushNow(){
+  if(!G.on)return;setSync('同步中…');
+  try{await call('push',S);ldel(DK);setSync('已同步 '+nowT());return true}
+  catch(e){setSync('同步失敗：'+e.message+'（資料仍在這個瀏覽器，之後會再試）');return false}
 }
 async function syncAll(first){
+  if(!G.on){setSync('請先填寫網址與密碼，再按「儲存設定並同步」');return false}
   setSync('同步中…');
   try{
-    if(!G.sid)G.sid=await findOrCreate();
-    const d=await pullData(),had=Object.keys(S.entries).length,dirty=!!lget(DK);
+    const d=(await call('pull')).data||{},re=d.entries||{},had=Object.keys(S.entries).length,dirty=!!lget(DK);
     let need=false;
     if(first||dirty){
       const keep=had>0||dirty;
-      S={profile:keep?S.profile:(d.profile&&d.profile.sex?d.profile:S.profile),entries:Object.assign({},d.entries,S.entries)};
+      S={profile:keep?S.profile:(d.profile&&d.profile.sex?d.profile:S.profile),entries:Object.assign({},re,S.entries)};
       need=had>0||dirty;
-    }else if(Object.keys(d.entries).length){
-      S={profile:d.profile&&d.profile.sex?d.profile:S.profile,entries:d.entries};
+    }else if(Object.keys(re).length){
+      S={profile:d.profile&&d.profile.sex?d.profile:S.profile,entries:re};
     }else need=had>0;
-    G.pulled=true;storeLocal();refreshUI();renderAuth();
-    if(need)await pushOnly();else setSync('已與雲端同步 '+nowT());
-  }catch(e){setSync('同步失敗：'+e.message)}
+    storeLocal();refreshUI();
+    if(need)return await pushNow();
+    setSync('已與試算表同步 '+nowT());return true;
+  }catch(e){setSync('同步失敗：'+e.message);return false}
 }
-async function pushNow(){if(!G.on)return;if(!G.pulled)return syncAll(false);return pushOnly()}
-
-$('gIn').onclick=async()=>{
-  try{
-    setSync('登入中…');await getToken('');
-    const u=await(await fetch('https://www.googleapis.com/oauth2/v3/userinfo',{headers:{Authorization:'Bearer '+G.token}})).json();
-    const prev=lget(UK);
-    G.email=u.email||'';G.name=u.name||G.email;G.on=true;lset(UK,G.email);lset(NK,G.name);
-    if(prev&&prev!==G.email){S=defData();ldel(DK);storeLocal();refreshUI()}
-    G.sid='';G.pulled=false;renderAuth();
-    await syncAll(!prev||prev!==G.email);
-  }catch(e){setSync('登入失敗：'+e.message)}
+$('syncSave').onclick=async()=>{
+  const u=$('syncUrl').value.trim(),p=$('syncPwd').value;
+  if(!/^https:\/\/script\.google\.com\/.+\/exec(\?.*)?$/.test(u)){setSync('網址格式不正確，應該是 https://script.google.com/…/exec');return}
+  if(!p){setSync('請輸入密碼');return}
+  G.url=u;G.pwd=p;G.on=true;lset(SK,JSON.stringify({url:u,pwd:p}));
+  if(await syncAll(true))lset(FK,'1');
 };
 $('syncNow').onclick=()=>syncAll(false);
-$('gOut').onclick=()=>{
-  if(!confirm('登出後，這個瀏覽器上的本機紀錄會清除（已同步的資料仍保存在你的 Google 試算表）。'+(lget(DK)?'\n\n注意：還有尚未同步的變更，登出後會遺失。':'')+'\n\n確定要登出嗎？'))return;
-  ldel(DK);ldel(UK);ldel(NK);ldel(KEY);
-  Object.assign(G,{on:false,token:null,exp:0,email:'',name:'',sid:'',pulled:false});
-  S=defData();mem=null;$('bmi').dataset.manual='';refreshUI();renderAuth();setSync('已登出');
+$('syncOff').onclick=()=>{
+  G.on=false;G.url='';G.pwd='';ldel(SK);ldel(DK);
+  $('syncUrl').value='';$('syncPwd').value='';setSync('已清除設定。資料仍保留在這個瀏覽器與你的試算表中');
+};
+$('copyCode').onclick=async()=>{
+  try{await navigator.clipboard.writeText($('gsCode').value);setSync('程式碼已複製')}
+  catch(e){$('gsCode').select();setSync('請按 Ctrl+C（或長按選單）複製選取的程式碼')}
 };
 
-G.email=lget(UK)||'';G.name=lget(NK)||G.email;G.on=!!G.email;
-$('date').value=today();fillProfile();fillForm();render();renderAuth();
-if(G.on)setSync('已登入。按「立即同步」載入雲端資料（約每小時需要重新連線一次）');
+$('date').value=today();fillProfile();fillForm();render();
+$('syncUrl').value=G.url;$('syncPwd').value=G.pwd;
+if(typeof location!=='undefined'&&/[?&]sync=1/.test(location.search))$('authCard').hidden=false;
+if(G.on){const first=!lget(FK);syncAll(first).then(ok=>{if(ok)lset(FK,'1')})}
 </script>
 </body>
 </html>
