@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>身體數據與飲食日記</title>
+<title>我的美麗日記</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap">
 <style>
@@ -110,6 +110,7 @@ input[type=date]{-webkit-appearance:none;appearance:none;display:block;min-width
 @media (max-width:640px){
 .wrap{padding:20px 14px 44px}
 .hd h1{font-size:28px}
+.hd p{font-size:13px}
 .card{padding:18px;border-radius:20px}
 .blk{padding:14px}
 .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
@@ -117,7 +118,7 @@ input[type=date]{-webkit-appearance:none;appearance:none;display:block;min-width
 .meal-add .name{grid-column:1 / -1}
 .meal-add button{grid-column:1 / -1}
 .row button,.btnlink{flex:1 1 100%}
-.datebox{min-width:0;width:100%}
+.datebox{display:block;min-width:0;width:100%}
 .full{grid-template-columns:minmax(0,1fr)}
 .stat b{font-size:21px}
 }
@@ -141,7 +142,7 @@ input[type=date]{-webkit-appearance:none;appearance:none;display:block;min-width
 <header class="hd">
 <div>
 <span class="eyebrow">每日健康紀錄</span>
-<h1>身體數據與飲食日記</h1>
+<h1>我的美麗日記</h1>
 <p>記錄身體組成、運動與飲食，每天一點點，看見自己的進步。</p>
 </div>
 <div class="datebox"><label for="date">日期</label><input id="date" type="date"></div>
@@ -163,7 +164,7 @@ input[type=date]{-webkit-appearance:none;appearance:none;display:block;min-width
 <section class="card">
 <h2>今日紀錄</h2>
 <div class="blk">
-<h3>身體數據</h3>
+<h3>💪身體數據</h3>
 <div class="grid">
 <div><label for="weight">體重（kg）</label><input id="weight" type="number" inputmode="decimal"></div>
 <div><label for="fat">體脂率（%）</label><input id="fat" type="number" inputmode="decimal"></div>
@@ -175,7 +176,7 @@ input[type=date]{-webkit-appearance:none;appearance:none;display:block;min-width
 </div>
 </div>
 <div class="blk">
-<h3>運動</h3>
+<h3>🏋️‍♂️運動</h3>
 <p class="note" style="margin:-4px 0 12px">分鐘數，沒運動就留空</p>
 <div class="grid">
 <div><label for="cardio">有氧運動（分）</label><input id="cardio" type="number" inputmode="numeric"></div>
@@ -187,7 +188,7 @@ input[type=date]{-webkit-appearance:none;appearance:none;display:block;min-width
 <div class="chips" id="groups"><label><input type="checkbox" value="胸部">胸部</label><label><input type="checkbox" value="背部">背部</label><label><input type="checkbox" value="肩膀">肩膀</label><label><input type="checkbox" value="腿前">腿前</label><label><input type="checkbox" value="腿後">腿後</label><label><input type="checkbox" value="臀部">臀部</label><label><input type="checkbox" value="二頭">二頭</label><label><input type="checkbox" value="三頭">三頭</label><label><input type="checkbox" value="核心">核心</label></div>
 </div>
 <div class="blk">
-<h3>飲食</h3>
+<h3>🍔飲食</h3>
 <p class="note" style="margin:-4px 0 12px">可加入多筆，自動加總</p>
 <div class="meal-add">
 <div class="name"><label for="mname">餐點名稱</label><input id="mname" placeholder="例：早餐、雞胸便當"></div>
@@ -215,7 +216,7 @@ input[type=date]{-webkit-appearance:none;appearance:none;display:block;min-width
 <div class="stat" id="sDef"><span>熱量赤字</span><b>–</b></div>
 </div>
 <div class="legend" id="lgP" hidden>
-<p class="lt">今日蛋白質顏色（公克／公斤體重）</p>
+<p class="lt">今日蛋白質（公克／公斤體重）</p>
 <ul>
 <li class="s-red"><i></i>未達 1.0 倍・偏低</li>
 <li class="s-yellow"><i></i>1.0–1.2 倍・接近</li>
@@ -224,7 +225,7 @@ input[type=date]{-webkit-appearance:none;appearance:none;display:block;min-width
 </ul>
 </div>
 <div class="legend" id="lgD" hidden>
-<p class="lt">熱量赤字顏色（攝取 − 消耗，負值為赤字）</p>
+<p class="lt">熱量赤字（攝取 − 消耗，負值為赤字）</p>
 <ul>
 <li class="s-green"><i></i>-300～-500 kcal・理想</li>
 <li class="s-yellow"><i></i>0～-300 kcal・偏少</li>
@@ -245,7 +246,7 @@ input[type=date]{-webkit-appearance:none;appearance:none;display:block;min-width
 <div class="stat" id="wWt"><span>體重變化</span><b>–</b></div>
 </div>
 <div class="legend" id="lgW" hidden>
-<p class="lt">運動天數顏色（每週）</p>
+<p class="lt">運動天數（每週）</p>
 <ul>
 <li class="s-red"><i></i>0–2 天・偏少</li>
 <li class="s-yellow"><i></i>3–4 天・接近</li>
@@ -414,7 +415,7 @@ const DK='bodylog.dirty',SK='bodylog.sync';
 const G={on:false,url:'',pwd:'',pulled:false};
 try{const c=JSON.parse(lget(SK)||'null');if(c&&c.url){G.url=c.url;G.pwd=c.pwd||'';G.on=true}}catch(e){}
 // 直接串接：把你部署好的 Apps Script 網址與密碼填在下面兩個引號中，頁面就會自動同步，不需要任何設定畫面。
-const PRESET={url:'https://script.google.com/macros/s/AKfycbz9eTOjF0nKRSIbEliRallN3K8H9rOHrEYCYlKQBeN7X21N6L29wqzFlDhY0gmi7rNjeg/exec',pwd:'rich940406'};
+const PRESET={url:'https://script.google.com/macros/s/AKfycbyLb3h4U89wmJHz5n3MWHCumzV0rebCTq-sxxFATYA9_V_SjZe6QCVvfWb_O-Nqu3G3eQ/exec',pwd:'rich940406'};
 const FK='bodylog.synced';
 if(PRESET.url){G.url=PRESET.url;G.pwd=PRESET.pwd;G.on=true}
 function persist(){mem=S;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){const w=document.getElementById('storeWarn');if(w)w.hidden=false}
