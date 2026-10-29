@@ -414,7 +414,7 @@ const DK='bodylog.dirty',SK='bodylog.sync';
 const G={on:false,url:'',pwd:'',pulled:false};
 try{const c=JSON.parse(lget(SK)||'null');if(c&&c.url){G.url=c.url;G.pwd=c.pwd||'';G.on=true}}catch(e){}
 // 直接串接：把你部署好的 Apps Script 網址與密碼填在下面兩個引號中，頁面就會自動同步，不需要任何設定畫面。
-const PRESET={url:'',pwd:''};
+const PRESET={url:'https://script.google.com/macros/s/AKfycbz9eTOjF0nKRSIbEliRallN3K8H9rOHrEYCYlKQBeN7X21N6L29wqzFlDhY0gmi7rNjeg/exec',pwd:'rich940406'};
 const FK='bodylog.synced';
 if(PRESET.url){G.url=PRESET.url;G.pwd=PRESET.pwd;G.on=true}
 function persist(){mem=S;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){const w=document.getElementById('storeWarn');if(w)w.hidden=false}
