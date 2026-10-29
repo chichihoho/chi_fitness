@@ -291,7 +291,7 @@ input[type=date]{-webkit-appearance:none;appearance:none;display:block;min-width
 <li>回到這裡，貼上網址和同一組密碼，按「儲存設定並同步」。</li>
 </ol>
 <label for="gsCode">Apps Script 程式碼</label>
-<textarea id="gsCode" readonly rows="8" spellcheck="false">// 身體數據與飲食日記：Google 試算表同步程式
+<textarea id="gsCode" readonly rows="8" spellcheck="false">// 身體數據與飲食日記：Google 試算表同步程式（v2：合併寫入＋每日自動備份）
 // 使用前，請把下面這行的密碼改成你自己的（日記頁面要填同一組）
 const PASSWORD = '請改成你自己的密碼';
 
@@ -351,17 +351,39 @@ function read_() {
   return { profile: profile, entries: entries };
 }
 
+function backup_() {
+  // 每天第一次寫入前，先把「日記」分頁複製成「備份_日期」，保留最近 7 天
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sh = ss.getSheetByName(SHEET);
+  if (!sh || sh.getLastRow() &lt; 2) return;
+  const name = '備份_' + Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyyMMdd');
+  if (ss.getSheetByName(name)) return;
+  sh.copyTo(ss).setName(name);
+  const olds = ss.getSheets().filter(function (s) { return /^備份_\d{8}$/.test(s.getName()); })
+    .sort(function (a, b) { return a.getName() &lt; b.getName() ? -1 : 1; });
+  while (olds.length &gt; 7) ss.deleteSheet(olds.shift());
+}
+
+// 合併寫入：傳來的日期會新增或更新，沒傳來的日期一律保留；
+// 只有 data.del 清單裡明確指定的日期才會被刪除。
 function write_(data) {
-  const sh = sheet_(SHEET), cfg = sheet_(CFG);
   data = data || {};
-  cfg.getRange('A1').setValue(JSON.stringify(data.profile || {}));
+  backup_();
+  const cur = read_();
+  const entries = cur.entries;
+  (data.del || []).forEach(function (d) { delete entries[d]; });
+  const inc = data.entries || {};
+  Object.keys(inc).forEach(function (d) { entries[d] = inc[d]; });
+  const profile = (data.profile &amp;&amp; data.profile.sex) ? data.profile : (cur.profile || {});
+  const sh = sheet_(SHEET), cfg = sheet_(CFG);
+  cfg.getRange('A1').setValue(JSON.stringify(profile));
   sh.clear();
   sh.getRange(1, 1, 1, HEAD.length).setValues([HEAD]).setFontWeight('bold');
   sh.setFrozenRows(1);
-  const ds = Object.keys(data.entries || {}).sort();
+  const ds = Object.keys(entries).sort();
   if (!ds.length) return;
   const rows = ds.map(function (d) {
-    const e = data.entries[d];
+    const e = entries[d];
     return [d].concat(
       KEYS.map(function (k) { return e[k] == null ? '' : e[k]; }),
       [(e.groups || []).join('、'), e.meals ? JSON.stringify(e.meals) : '', (e.ctypes || []).join('、')]
@@ -389,10 +411,10 @@ function load(){try{const s=localStorage.getItem(KEY);if(s)return JSON.parse(s)}
 let S=load();
 const lget=k=>{try{return localStorage.getItem(k)}catch(e){return null}},lset=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}},ldel=k=>{try{localStorage.removeItem(k)}catch(e){}};
 const DK='bodylog.dirty',SK='bodylog.sync';
-const G={on:false,url:'',pwd:''};
+const G={on:false,url:'',pwd:'',pulled:false};
 try{const c=JSON.parse(lget(SK)||'null');if(c&&c.url){G.url=c.url;G.pwd=c.pwd||'';G.on=true}}catch(e){}
 // 直接串接：把你部署好的 Apps Script 網址與密碼填在下面兩個引號中，頁面就會自動同步，不需要任何設定畫面。
-const PRESET={url:'https://script.google.com/macros/s/AKfycbwLKbe1qa7__wsp8VrW7gbAG02q_hB5hSbYB7DXbKs8UAsSjKi5fRoDG7yDB8MVS34FiQ/exec',pwd:'rich940406'};
+const PRESET={url:'',pwd:''};
 const FK='bodylog.synced';
 if(PRESET.url){G.url=PRESET.url;G.pwd=PRESET.pwd;G.on=true}
 function persist(){mem=S;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){const w=document.getElementById('storeWarn');if(w)w.hidden=false}
@@ -575,7 +597,7 @@ function drawTable(){
 }
 $('tbl').addEventListener('click',ev=>{
   const t=ev.target;
-  if(t.dataset.del){if(confirm('刪除 '+t.dataset.del+' 的紀錄？')){delete S.entries[t.dataset.del];persist();fillForm();render();pushNow()}}
+  if(t.dataset.del){if(confirm('刪除 '+t.dataset.del+' 的紀錄？')){addDel(t.dataset.del);delete S.entries[t.dataset.del];persist();fillForm();render();pushNow()}}
   else if(t.classList.contains('edit')){ev.preventDefault();$('date').value=t.dataset.d;$('bmi').dataset.manual='';chartAnchor=null;fillForm();render();$('date').scrollIntoView({behavior:'smooth'})}
 });
 $('copy').onclick=async()=>{
@@ -589,7 +611,7 @@ function setMeals(d,ms){
   const e=S.entries[d]||(S.entries[d]={});
   if(ms.length){e.meals=ms;e.kcal=Math.round(ms.reduce((a,m)=>a+m.k,0));e.protein=r1(ms.reduce((a,m)=>a+m.p,0))}
   else{delete e.meals;delete e.kcal;delete e.protein}
-  if(!Object.keys(e).length)delete S.entries[d];
+  if(!Object.keys(e).length){delete S.entries[d];addDel(d)}
   persist();render();
 }
 $('addMeal').onclick=()=>{
@@ -653,7 +675,7 @@ $('delDay').onclick=()=>{
   const d=$('date').value;
   if(!d||!S.entries[d]){$('msg').textContent='這天沒有可刪除的紀錄';setTimeout(()=>$('msg').textContent='',2000);return}
   if(!confirm('確定刪除 '+d+' 的所有紀錄？此動作無法復原。'))return;
-  delete S.entries[d];persist();$('bmi').dataset.manual='';fillForm();render();pushNow();
+  addDel(d);delete S.entries[d];persist();$('bmi').dataset.manual='';fillForm();render();pushNow();
   $('msg').textContent='已刪除 '+d+' 的紀錄';setTimeout(()=>$('msg').textContent='',2500);
 };
 $('exp').onclick=()=>{
@@ -689,10 +711,19 @@ async function call(action,data){
   let j;try{j=await r.json()}catch(e){throw new Error('回應格式不正確，請確認網址正確，且部署時「誰可以存取」選「所有人」')}
   if(!j.ok)throw new Error(j.error||'失敗');return j;
 }
-async function pushNow(){
-  if(!G.on)return;setSync('同步中…');
-  try{await call('push',S);ldel(DK);setSync('已同步 '+nowT());return true}
+const DLK='bodylog.del';
+const getDel=()=>{try{return JSON.parse(lget(DLK)||'[]')}catch(e){return[]}};
+const addDel=d=>{const a=getDel();if(!a.includes(d)){a.push(d);lset(DLK,JSON.stringify(a))}};
+async function pushOnly(){
+  if(!G.on)return false;setSync('同步中…');
+  try{await call('push',{profile:S.profile,entries:S.entries,del:getDel()});ldel(DK);ldel(DLK);setSync('已同步 '+nowT());return true}
   catch(e){setSync('同步失敗：'+e.message+'（資料仍在這個瀏覽器，之後會再試）');return false}
+}
+// 安全規則：這個頁面還沒成功讀取過雲端資料前，不會把資料送出去
+async function pushNow(){
+  if(!G.on)return false;
+  if(!G.pulled)return syncAll(false);
+  return pushOnly();
 }
 async function syncAll(first){
   if(!G.on){setSync('請先填寫網址與密碼，再按「儲存設定並同步」');return false}
@@ -703,12 +734,13 @@ async function syncAll(first){
     if(first||dirty){
       const keep=had>0||dirty;
       S={profile:keep?S.profile:(d.profile&&d.profile.sex?d.profile:S.profile),entries:Object.assign({},re,S.entries)};
+      getDel().forEach(x=>{delete S.entries[x]});
       need=had>0||dirty;
     }else if(Object.keys(re).length){
       S={profile:d.profile&&d.profile.sex?d.profile:S.profile,entries:re};
     }else need=had>0;
-    storeLocal();refreshUI();
-    if(need)return await pushNow();
+    G.pulled=true;storeLocal();refreshUI();
+    if(need)return await pushOnly();
     setSync('已與試算表同步 '+nowT());return true;
   }catch(e){setSync('同步失敗：'+e.message);return false}
 }
